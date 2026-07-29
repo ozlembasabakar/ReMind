@@ -15,6 +15,16 @@ dependencies {
     implementation(libs.compose.uiToolingPreview)
 }
 
+sourceSets {
+    main {
+        resources.srcDirs("src/desktopMain/resources")
+    }
+}
+
+tasks.withType<ProcessResources> {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 compose.desktop {
     application {
         mainClass = "com.ozlembasabakar.remind.MainKt"
@@ -23,6 +33,16 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.ozlembasabakar.remind"
             packageVersion = "1.0.0"
+
+            macOS {
+                iconFile.set(project.file("src/desktopMain/resources/icon.icns"))
+            }
+            windows {
+                iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
+            }
+            linux {
+                iconFile.set(project.file("src/desktopMain/resources/icon.png"))
+            }
         }
     }
 }
