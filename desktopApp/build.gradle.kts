@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 dependencies {
@@ -11,6 +12,8 @@ dependencies {
 
     implementation(compose.desktop.currentOs)
     implementation(libs.kotlinx.coroutinesSwing)
+    implementation(libs.kotlinx.serialization.json)
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.23.0")
 
     implementation(libs.compose.uiToolingPreview)
 }
@@ -23,6 +26,14 @@ sourceSets {
 
 tasks.withType<ProcessResources> {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.register<JavaExec>("importWords") {
+    group = "application"
+    description = "Import words from words.json into Cloud Firestore"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.ozlembasabakar.remind.importer.WordsImporterKt")
+    workingDir = rootDir
 }
 
 compose.desktop {
