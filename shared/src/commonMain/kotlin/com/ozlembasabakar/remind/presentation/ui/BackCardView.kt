@@ -20,7 +20,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -187,7 +186,7 @@ fun BackCardView(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 6.dp),
-                                verticalAlignment = Alignment.Top
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 // Timeline bullet point line node
                                 Column(
@@ -209,12 +208,6 @@ fun BackCardView(
                                 }
 
                                 Column {
-                                    Text(
-                                        text = example.tenseName,
-                                        fontSize = 12.sp,
-                                        color = Color(0xFF8D8D8B),
-                                        fontWeight = FontWeight.Medium
-                                    )
                                     HighlightedExampleSentence(
                                         sentence = example.germanSentence,
                                         targetWord = example.targetWord,

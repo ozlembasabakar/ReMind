@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import com.ozlembasabakar.remind.data.audio.createAudioPlayer
-import com.ozlembasabakar.remind.data.repository.InMemoryVocabularyRepository
+import com.ozlembasabakar.remind.data.repository.FirestoreVocabularyRepository
 import com.ozlembasabakar.remind.domain.usecase.GetNextFlashcardUseCase
 import com.ozlembasabakar.remind.domain.usecase.PlayAudioUseCase
 import com.ozlembasabakar.remind.domain.usecase.ProcessSrsReviewUseCase
@@ -16,7 +16,7 @@ import com.ozlembasabakar.remind.presentation.ui.FlashcardScreen
 @Preview
 fun App() {
     val viewModel = remember {
-        val repository = InMemoryVocabularyRepository()
+        val repository = FirestoreVocabularyRepository()
         val audioPlayer = createAudioPlayer()
         FlashcardViewModel(
             getNextFlashcardUseCase = GetNextFlashcardUseCase(repository),

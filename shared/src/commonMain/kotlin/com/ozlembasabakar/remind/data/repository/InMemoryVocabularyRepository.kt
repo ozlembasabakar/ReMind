@@ -28,14 +28,12 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             ),
             examples = listOf(
                 TenseExample(
-                    tenseName = "Nominativ",
                     germanSentence = "Der Tisch steht im Wohnzimmer.",
                     turkishTranslation = "Masa oturma odasında duruyor.",
                     targetWord = "Tisch",
                     targetWordArticle = Article.DER
                 ),
                 TenseExample(
-                    tenseName = "Plural",
                     germanSentence = "Die Tische sind sehr groß.",
                     turkishTranslation = "Masalar çok büyük.",
                     targetWord = "Tische",
@@ -56,7 +54,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             ),
             examples = listOf(
                 TenseExample(
-                    tenseName = "Präsens",
                     germanSentence = "Die Katze schläft auf dem Sofa.",
                     turkishTranslation = "Kedi koltukta uyuyor.",
                     targetWord = "Katze",
@@ -77,7 +74,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             ),
             examples = listOf(
                 TenseExample(
-                    tenseName = "Präsens",
                     germanSentence = "Das Buch ist sehr interessant.",
                     turkishTranslation = "Kitap çok ilginç.",
                     targetWord = "Buch",
@@ -100,21 +96,18 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             ),
             examples = listOf(
                 TenseExample(
-                    tenseName = "Präsens",
                     germanSentence = "Ich gehe heute in die Schule.",
                     turkishTranslation = "Bugün okula gidiyorum.",
                     targetWord = "gehe",
                     targetWordArticle = Article.NONE
                 ),
                 TenseExample(
-                    tenseName = "Präteritum",
                     germanSentence = "Er ging gestern nach Hause.",
                     turkishTranslation = "Dün eve gitti.",
                     targetWord = "ging",
                     targetWordArticle = Article.NONE
                 ),
                 TenseExample(
-                    tenseName = "Perfekt",
                     germanSentence = "Wir sind ins Kino gegangen.",
                     turkishTranslation = "Sinemaya gittik.",
                     targetWord = "gegangen",
@@ -135,7 +128,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             ),
             examples = listOf(
                 TenseExample(
-                    tenseName = "Plural",
                     germanSentence = "Die Kinder spielen im Park.",
                     turkishTranslation = "Çocuklar parkta oynuyor.",
                     targetWord = "Kinder",
