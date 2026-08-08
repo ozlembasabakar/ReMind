@@ -105,7 +105,7 @@ class FirestoreVocabularyRepository(
 
             if (loaded.isNotEmpty()) {
                 println("Successfully loaded ${loaded.size} cards from Cloud Firestore!")
-                cachedCards = loaded
+                cachedCards = loaded.shuffled()
                 return@withLock cachedCards
             } else {
                 println("Loaded document list is empty after decoding.")
@@ -117,12 +117,12 @@ class FirestoreVocabularyRepository(
         val restCards = fetchFirestoreRestWords()
         if (!restCards.isNullOrEmpty()) {
             println("Successfully loaded ${restCards.size} cards via Firestore REST API!")
-            cachedCards = restCards
+            cachedCards = restCards.shuffled()
             return@withLock cachedCards
         }
 
         println("Firestore returned no cards or threw an exception. Falling back to local memory.")
-        val fallbackCards = fallbackRepository.getAllCards()
+        val fallbackCards = fallbackRepository.getAllCards().shuffled()
         cachedCards = fallbackCards
         fallbackCards
     }
