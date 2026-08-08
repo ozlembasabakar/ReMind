@@ -111,12 +111,18 @@ class FlashcardViewModel(
         }
     }
 
+    private var isFlipping = false
+
     private fun submitRating(rating: SrsStatus.Rating) {
+        if (isFlipping) return
         val current = uiState.value.currentCard ?: return
+        isFlipping = true
+
         viewModelScope.launch {
             processSrsReviewUseCase(current.id, rating)
             _uiState.update {
                 it.copy(
+                    cardSide = FlashcardContract.CardSide.Front,
                     previousCard = current,
                     previousRating = rating
                 )
@@ -124,7 +130,10 @@ class FlashcardViewModel(
             _uiEffect.emit(
                 FlashcardContract.UiEffect.ShowUndoSnackbar("Rated as ${rating.name.lowercase().replaceFirstChar { c -> c.uppercase() }}")
             )
-            // Fetch next card and reset cardSide back to CardSide.Front
+
+            // Wait 400ms for card flip animation to finish closing before swapping to nextCard
+            kotlinx.coroutines.delay(400)
+
             val nextCard = getNextFlashcardUseCase()
             if (nextCard != null) {
                 _uiState.update {
@@ -139,6 +148,7 @@ class FlashcardViewModel(
                 _uiState.update { it.copy(isLoading = false, currentCard = null) }
                 _uiEffect.emit(FlashcardContract.UiEffect.StudySessionCompleted)
             }
+            isFlipping = false
         }
     }
 
