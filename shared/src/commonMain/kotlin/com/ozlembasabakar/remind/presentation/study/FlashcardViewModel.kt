@@ -90,16 +90,18 @@ class FlashcardViewModel(
 
     private fun playAudio(url: String?) {
         val targetUrl = url ?: uiState.value.currentCard?.audioUrl
-        if (targetUrl.isNullOrEmpty()) {
+        val germanText = uiState.value.currentCard?.germanWord ?: ""
+
+        if (targetUrl.isNullOrEmpty() && germanText.isEmpty()) {
             viewModelScope.launch {
-                _uiEffect.emit(FlashcardContract.UiEffect.AudioPlaybackFailed("No audio available"))
+                _uiEffect.emit(FlashcardContract.UiEffect.AudioPlaybackFailed("No audio or word available"))
             }
             return
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isAudioPlaying = true) }
             runCatching {
-                playAudioUseCase(targetUrl)
+                playAudioUseCase(targetUrl, germanText)
             }.onFailure { ex ->
                 _uiEffect.emit(
                     FlashcardContract.UiEffect.AudioPlaybackFailed(
