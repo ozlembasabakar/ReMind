@@ -127,10 +127,30 @@ class FirestoreVocabularyRepository(
         fallbackCards
     }
 
+    // --- SRS Persistence (Commented out for v1 release per requirements) ---
+    // private val srsMap = mutableMapOf<String, SrsStatus>()
+    // private var isSrsLoaded = false
+
+    /*
+    private fun loadPersistentSrs() {
+        if (!isSrsLoaded) {
+            val stored = com.ozlembasabakar.remind.data.local.SrsStorage.loadSrsRecords()
+            srsMap.putAll(stored)
+            val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+            stored.forEach { (id, record) ->
+                if (record.nextReviewAtEpochMs > now && record.repetitions > 0) {
+                    reviewedIds.add(id)
+                }
+            }
+            isSrsLoaded = true
+        }
+    }
+    */
+
     override suspend fun getNextDueCard(): Vocabulary? {
         val cards = ensureLoaded()
         return mutex.withLock {
-            cards.firstOrNull { it.id !in reviewedIds } ?: cards.firstOrNull()
+            cards.firstOrNull { it.id !in reviewedIds }
         }
     }
 
@@ -144,6 +164,8 @@ class FirestoreVocabularyRepository(
     override suspend fun updateSrsStatus(id: String, rating: SrsStatus.Rating) {
         mutex.withLock {
             reviewedIds.add(id)
+            // Persistent storage commented out for v1:
+            // com.ozlembasabakar.remind.data.local.SrsStorage.saveSrsRecords(...)
         }
         runCatching {
             fallbackRepository.updateSrsStatus(id, rating)

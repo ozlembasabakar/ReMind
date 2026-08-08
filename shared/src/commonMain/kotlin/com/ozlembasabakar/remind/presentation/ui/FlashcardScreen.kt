@@ -93,7 +93,6 @@ fun FlashcardScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            // Clean Top Navigation & Header Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,7 +100,6 @@ fun FlashcardScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Top-left Back Button (Temporarily commented out per requirement 3)
                 Box(modifier = Modifier.size(48.dp)) {
                     /*
                     IconButton(
@@ -116,7 +114,6 @@ fun FlashcardScreen(
                     */
                 }
 
-                // Centered Title
                 Text(
                     text = "UNIT 4 • FOOD",
                     fontSize = 13.sp,
@@ -125,7 +122,6 @@ fun FlashcardScreen(
                     letterSpacing = 1.2.sp
                 )
 
-                // Header Actions: Audio Speaker Icon & Bookmark Button
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = {
@@ -141,6 +137,7 @@ fun FlashcardScreen(
                         )
                     }
 
+                    /*
                     IconButton(
                         onClick = { viewModel.onIntent(FlashcardContract.UiIntent.ToggleBookmark) }
                     ) {
@@ -150,12 +147,12 @@ fun FlashcardScreen(
                             tint = if (uiState.isBookmarked) Color(0xFFFFB300) else Color(0xFF757575)
                         )
                     }
+                    */
                 }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Main Flashcard Area
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -205,7 +202,6 @@ fun FlashcardScreen(
                     }
 
                     else -> {
-                        // Session Completion View
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
@@ -231,8 +227,8 @@ fun FlashcardScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // SRS Rating Buttons Footer (Hard / Good / Easy)
-            // Requirement 1: Appear ONLY when the card is flipped to the Back side!
+            // Neutralized SRS Rating Buttons Footer (Hard / Good / Easy commented out for now per request)
+            /*
             if (uiState.currentCard != null && uiState.cardSide is FlashcardContract.CardSide.Back) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -257,9 +253,29 @@ fun FlashcardScreen(
                     SrsFooterButton(
                         label = "Easy",
                         iconText = "✓",
-                        isActive = true, // Styled active green matching reference
+                        isActive = true,
                         onClick = { viewModel.onIntent(FlashcardContract.UiIntent.SubmitSrsRating(SrsStatus.Rating.EASY)) },
                         modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+            */
+
+            if (uiState.currentCard != null && uiState.cardSide is FlashcardContract.CardSide.Back) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFF1C1B1F))
+                        .clickable { viewModel.onIntent(FlashcardContract.UiIntent.SubmitSrsRating(SrsStatus.Rating.GOOD)) }
+                        .padding(vertical = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Next Word →",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }

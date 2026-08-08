@@ -127,9 +127,11 @@ class FlashcardViewModel(
                     previousRating = rating
                 )
             }
+            /*
             _uiEffect.emit(
                 FlashcardContract.UiEffect.ShowUndoSnackbar("Rated as ${rating.name.lowercase().replaceFirstChar { c -> c.uppercase() }}")
             )
+            */
 
             // Wait 400ms for card flip animation to finish closing before swapping to nextCard
             kotlinx.coroutines.delay(400)
@@ -160,7 +162,7 @@ class FlashcardViewModel(
                     currentCard = prev,
                     previousCard = null,
                     previousRating = null,
-                    cardSide = FlashcardContract.CardSide.Back // Placed on Back side to re-evaluate
+                    cardSide = FlashcardContract.CardSide.Back
                 )
             }
             _uiEffect.emit(FlashcardContract.UiEffect.ShowToast("Rating undone"))

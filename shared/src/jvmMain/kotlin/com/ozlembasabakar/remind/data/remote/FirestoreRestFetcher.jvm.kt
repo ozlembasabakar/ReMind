@@ -72,7 +72,6 @@ actual suspend fun fetchFirestoreRestWords(): List<Vocabulary>? = withContext(Di
                 val turkish = getStringField(exFields, "turkishTranslation") ?: getStringField(exFields, "sentenceTurkish") ?: ""
                 if (german.isEmpty() && turkish.isEmpty()) null
                 else {
-                    val tense = getStringField(exFields, "tenseName") ?: "Beispiel"
                     val target = getStringField(exFields, "targetWord") ?: germanWord
                     val targetArtStr = getStringField(exFields, "targetWordArticle") ?: "NONE"
                     val targetArt = runCatching { Article.valueOf(targetArtStr.uppercase()) }.getOrDefault(Article.NONE)
