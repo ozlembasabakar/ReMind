@@ -2,6 +2,8 @@ package com.ozlembasabakar.remind.data.repository
 
 import com.ozlembasabakar.remind.data.remote.dto.WordDto
 import com.ozlembasabakar.remind.data.remote.dto.toDomain
+import com.ozlembasabakar.remind.data.remote.fetchFirestoreRestWords
+import com.ozlembasabakar.remind.data.remote.initializeFirebase
 import com.ozlembasabakar.remind.domain.model.Article
 import com.ozlembasabakar.remind.domain.model.GrammarBreakdown
 import com.ozlembasabakar.remind.domain.model.SrsStatus
@@ -26,6 +28,7 @@ class FirestoreVocabularyRepository(
         if (cachedCards.isNotEmpty()) return@withLock cachedCards
 
         try {
+            initializeFirebase()
             println("Fetching collection 'words' from Cloud Firestore...")
             val snapshot = Firebase.firestore.collection("words").get()
             println("Firestore snapshot documents count: ${snapshot.documents.size}")
@@ -109,7 +112,13 @@ class FirestoreVocabularyRepository(
             }
         } catch (e: Exception) {
             println("Firestore collection fetch EXCEPTION: ${e::class.simpleName} - ${e.message}")
-            e.printStackTrace()
+        }
+
+        val restCards = fetchFirestoreRestWords()
+        if (!restCards.isNullOrEmpty()) {
+            println("Successfully loaded ${restCards.size} cards via Firestore REST API!")
+            cachedCards = restCards
+            return@withLock cachedCards
         }
 
         println("Firestore returned no cards or threw an exception. Falling back to local memory.")
