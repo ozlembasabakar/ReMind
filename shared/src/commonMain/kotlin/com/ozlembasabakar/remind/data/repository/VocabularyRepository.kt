@@ -1,4 +1,4 @@
-package com.ozlembasabakar.remind.domain.repository
+package com.ozlembasabakar.remind.data.repository
 
 import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.model.Vocabulary

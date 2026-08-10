@@ -13,7 +13,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(libs.kotlinx.coroutinesSwing)
     implementation(libs.kotlinx.serialization.json)
-    implementation("com.google.auth:google-auth-library-oauth2-http:1.23.0")
+    implementation(libs.google.auth.oauth2)
 
     implementation(libs.compose.uiToolingPreview)
 }

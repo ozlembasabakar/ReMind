@@ -6,7 +6,6 @@ import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.model.TenseExample
 import com.ozlembasabakar.remind.domain.model.Vocabulary
 import com.ozlembasabakar.remind.domain.model.WordType
-import com.ozlembasabakar.remind.domain.repository.VocabularyRepository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.math.max

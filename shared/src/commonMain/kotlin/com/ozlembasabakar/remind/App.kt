@@ -9,7 +9,7 @@ import com.ozlembasabakar.remind.data.repository.FirestoreVocabularyRepository
 import com.ozlembasabakar.remind.domain.usecase.GetNextFlashcardUseCase
 import com.ozlembasabakar.remind.domain.usecase.PlayAudioUseCase
 import com.ozlembasabakar.remind.domain.usecase.ProcessSrsReviewUseCase
-import com.ozlembasabakar.remind.presentation.study.FlashcardViewModel
+import com.ozlembasabakar.remind.presentation.FlashcardViewModel
 import com.ozlembasabakar.remind.presentation.ui.FlashcardScreen
 
 @Composable

@@ -1,16 +1,15 @@
 package com.ozlembasabakar.remind.data.repository
 
-import com.ozlembasabakar.remind.data.remote.dto.WordDto
-import com.ozlembasabakar.remind.data.remote.dto.toDomain
-import com.ozlembasabakar.remind.data.remote.fetchFirestoreRestWords
-import com.ozlembasabakar.remind.data.remote.initializeFirebase
+import com.ozlembasabakar.remind.data.repository.dto.WordDto
+import com.ozlembasabakar.remind.data.repository.dto.toDomain
+import com.ozlembasabakar.remind.data.firebase.fetchFirestoreRestWords
+import com.ozlembasabakar.remind.data.firebase.initializeFirebase
 import com.ozlembasabakar.remind.domain.model.Article
 import com.ozlembasabakar.remind.domain.model.GrammarBreakdown
 import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.model.TenseExample
 import com.ozlembasabakar.remind.domain.model.Vocabulary
 import com.ozlembasabakar.remind.domain.model.WordType
-import com.ozlembasabakar.remind.domain.repository.VocabularyRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.sync.Mutex

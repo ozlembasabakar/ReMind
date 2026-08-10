@@ -40,8 +40,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ozlembasabakar.remind.domain.model.SrsStatus
-import com.ozlembasabakar.remind.presentation.study.FlashcardContract
-import com.ozlembasabakar.remind.presentation.study.FlashcardViewModel
+import com.ozlembasabakar.remind.presentation.FlashcardContract
+import com.ozlembasabakar.remind.presentation.FlashcardViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -113,14 +113,6 @@ fun FlashcardScreen(
                     }
                     */
                 }
-
-                Text(
-                    text = "UNIT 4 • FOOD",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF8D8D8B),
-                    letterSpacing = 1.2.sp
-                )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
@@ -225,7 +217,7 @@ fun FlashcardScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Neutralized SRS Rating Buttons Footer (Hard / Good / Easy commented out for now per request)
+            // Neutralized SRS Rating Buttons Footer (Hard / Good / Easy commented out for now per request), feature commented out for v1 release per requirements
             /*
             if (uiState.currentCard != null && uiState.cardSide is FlashcardContract.CardSide.Back) {
                 Row(

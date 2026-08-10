@@ -13,15 +13,15 @@ class JvmAudioPlayer : AudioPlayer {
                     val tempFile = java.io.File.createTempFile("remind_de_tts_", ".mp3")
                     tempFile.deleteOnExit()
                     val safePath = tempFile.absolutePath.replace("\\", "/")
-                    val script = """
+                    val script = $$"""
                         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
-                        ${'$'}wc = New-Object System.Net.WebClient;
-                        ${'$'}wc.Headers.Add('User-Agent', 'Mozilla/5.0');
-                        ${'$'}wc.DownloadFile('$ttsUrl', '$safePath');
+                        $wc = New-Object System.Net.WebClient;
+                        $wc.Headers.Add('User-Agent', 'Mozilla/5.0');
+                        $wc.DownloadFile('$$ttsUrl', '$$safePath');
                         Add-Type -AssemblyName presentationCore;
-                        ${'$'}player = New-Object System.Windows.Media.MediaPlayer;
-                        ${'$'}player.Open('$safePath');
-                        ${'$'}player.Play();
+                        $player = New-Object System.Windows.Media.MediaPlayer;
+                        $player.Open('$$safePath');
+                        $player.Play();
                         Start-Sleep -s 3
                     """.trimIndent().replace("\n", " ")
                     ProcessBuilder("powershell", "-Command", script).start()

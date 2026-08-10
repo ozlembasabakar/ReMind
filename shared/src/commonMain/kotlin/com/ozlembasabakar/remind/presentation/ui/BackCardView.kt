@@ -39,7 +39,6 @@ fun BackCardView(
 ) {
     val scrollState = rememberScrollState()
 
-    // Note: Card container click is disabled per strict interaction rules!
     Card(
         modifier = modifier.fillMaxSize(),
         shape = RoundedCornerShape(24.dp),
@@ -62,12 +61,10 @@ fun BackCardView(
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Article Badge Pill (DER / DIE / DAS)
                 ArticleBadge(article = vocabulary.article)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // German Word Title
                 Text(
                     text = vocabulary.germanWord,
                     fontSize = 32.sp,
@@ -75,7 +72,6 @@ fun BackCardView(
                     color = Color(0xFF1C1B1F)
                 )
 
-                // Translation Subtitle
                 Text(
                     text = vocabulary.turkishTranslation,
                     fontSize = 18.sp,
@@ -87,7 +83,6 @@ fun BackCardView(
                 HorizontalDivider(color = Color(0xFFF0F0F0))
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // GRAMMAR & FORMS Section
                 vocabulary.grammar?.let { grammar ->
                     Box(
                         modifier = Modifier
@@ -169,7 +164,6 @@ fun BackCardView(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
-                // EXAMPLES Section
                 if (vocabulary.examples.isNotEmpty()) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -188,7 +182,6 @@ fun BackCardView(
                                     .padding(vertical = 6.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Timeline bullet point line node
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier.padding(top = 4.dp, end = 12.dp)
@@ -227,7 +220,6 @@ fun BackCardView(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Explicit 'See Front' Button (ONLY trigger for returning to front card)
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))

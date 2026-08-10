@@ -6,6 +6,8 @@ import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.usecase.GetNextFlashcardUseCase
 import com.ozlembasabakar.remind.domain.usecase.PlayAudioUseCase
 import com.ozlembasabakar.remind.domain.usecase.ProcessSrsReviewUseCase
+import com.ozlembasabakar.remind.presentation.FlashcardContract
+import com.ozlembasabakar.remind.presentation.FlashcardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

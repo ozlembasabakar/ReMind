@@ -1,4 +1,4 @@
-package com.ozlembasabakar.remind.presentation.study
+package com.ozlembasabakar.remind.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,7 @@ import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.usecase.GetNextFlashcardUseCase
 import com.ozlembasabakar.remind.domain.usecase.PlayAudioUseCase
 import com.ozlembasabakar.remind.domain.usecase.ProcessSrsReviewUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -136,7 +137,7 @@ class FlashcardViewModel(
             */
 
             // Wait 400ms for card flip animation to finish closing before swapping to nextCard
-            kotlinx.coroutines.delay(400)
+            delay(400)
 
             val nextCard = getNextFlashcardUseCase()
             if (nextCard != null) {

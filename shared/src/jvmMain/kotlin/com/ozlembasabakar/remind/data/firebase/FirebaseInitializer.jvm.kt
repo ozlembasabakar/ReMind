@@ -1,4 +1,4 @@
-package com.ozlembasabakar.remind.data.remote
+package com.ozlembasabakar.remind.data.firebase
 
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.FirebaseOptions

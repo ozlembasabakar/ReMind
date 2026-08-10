@@ -1,4 +1,4 @@
-package com.ozlembasabakar.remind.presentation.study
+package com.ozlembasabakar.remind.presentation
 
 import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.model.Vocabulary

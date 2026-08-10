@@ -1,7 +1,7 @@
 package com.ozlembasabakar.remind.domain.usecase
 
 import com.ozlembasabakar.remind.domain.model.Vocabulary
-import com.ozlembasabakar.remind.domain.repository.VocabularyRepository
+import com.ozlembasabakar.remind.data.repository.VocabularyRepository
 
 class GetNextFlashcardUseCase(
     private val repository: VocabularyRepository

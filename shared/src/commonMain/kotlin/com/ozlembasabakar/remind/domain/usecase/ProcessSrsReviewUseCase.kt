@@ -1,7 +1,7 @@
 package com.ozlembasabakar.remind.domain.usecase
 
 import com.ozlembasabakar.remind.domain.model.SrsStatus
-import com.ozlembasabakar.remind.domain.repository.VocabularyRepository
+import com.ozlembasabakar.remind.data.repository.VocabularyRepository
 
 class ProcessSrsReviewUseCase(
     private val repository: VocabularyRepository

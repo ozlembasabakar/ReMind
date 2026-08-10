@@ -1,4 +1,4 @@
-package com.ozlembasabakar.remind.data.remote.dto
+package com.ozlembasabakar.remind.data.repository.dto
 
 import com.ozlembasabakar.remind.domain.model.Article
 import com.ozlembasabakar.remind.domain.model.GrammarBreakdown
