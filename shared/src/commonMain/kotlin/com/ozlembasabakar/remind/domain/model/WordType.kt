@@ -5,5 +5,12 @@ enum class WordType {
     VERB,
     ADJECTIVE,
     ADVERB,
-    PHRASE
+    PHRASE;
+
+    companion object {
+        fun from(value: String?): WordType =
+            value?.trim()?.uppercase()?.let { str ->
+                runCatching { WordType.valueOf(str) }.getOrNull()
+            } ?: NOUN
+    }
 }

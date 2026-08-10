@@ -17,7 +17,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class FirestoreVocabularyRepository(
-    private val fallbackRepository: VocabularyRepository = InMemoryVocabularyRepository()
+    private val fallbackRepository: VocabularyRepository = LocalMockVocabularyRepository()
 ) : VocabularyRepository {
 
     private val mutex = Mutex()
@@ -47,10 +47,9 @@ class FirestoreVocabularyRepository(
                             val wordTypeStr: String = doc.get("wordType") ?: "NOUN"
                             val turkishTranslation: String = doc.get("turkishTranslation") ?: ""
                             val imageUrl: String? = doc.get("imageUrl")
-                            val audioUrl: String? = doc.get("audioUrl")
 
-                            val article = runCatching { Article.valueOf(articleStr.uppercase()) }.getOrDefault(Article.NONE)
-                            val wordType = runCatching { WordType.valueOf(wordTypeStr.uppercase()) }.getOrDefault(WordType.NOUN)
+                            val article = Article.from(articleStr)
+                            val wordType = WordType.from(wordTypeStr)
 
                             val grammarMap: Map<String, String?>? = runCatching { doc.get<Map<String, String?>?>("grammar") }.getOrNull()
                             val grammar = grammarMap?.let { g ->
@@ -70,7 +69,7 @@ class FirestoreVocabularyRepository(
                                 else {
                                     val target = map["targetWord"] ?: germanWord
                                     val targetArtStr = map["targetWordArticle"] ?: "-"
-                                    val targetArt = runCatching { Article.valueOf(targetArtStr.uppercase()) }.getOrDefault(Article.NONE)
+                                    val targetArt = Article.from(targetArtStr)
                                     TenseExample(
                                         germanSentence = german,
                                         turkishTranslation = turkish,
@@ -87,7 +86,6 @@ class FirestoreVocabularyRepository(
                                 wordType = wordType,
                                 turkishTranslation = turkishTranslation,
                                 imageUrl = imageUrl,
-                                audioUrl = audioUrl,
                                 grammar = grammar,
                                 examples = examples
                             )

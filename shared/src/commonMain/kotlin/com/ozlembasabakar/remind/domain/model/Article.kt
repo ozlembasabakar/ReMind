@@ -1,12 +1,18 @@
 package com.ozlembasabakar.remind.domain.model
 
 enum class Article(
-    val germanText: String,
-    val hexColor: Long
+    val germanText: String
 ) {
-    DER("der", 0xFF1E88E5),          // Blue
-    DIE("die", 0xFFE91E63),          // Red / Pink
-    DAS("das", 0xFF4CAF50),          // Green
-    PLURAL("die (Pl.)", 0xFFFBC02D), // Yellow
-    NONE("", 0xFF757575)             // Grey
+    DER("der"),
+    DIE("die"),
+    DAS("das"),
+    PLURAL("die (Pl.)"),
+    NONE("");
+
+    companion object {
+        fun from(value: String?): Article =
+            value?.trim()?.uppercase()?.let { str ->
+                runCatching { Article.valueOf(str) }.getOrNull()
+            } ?: NONE
+    }
 }

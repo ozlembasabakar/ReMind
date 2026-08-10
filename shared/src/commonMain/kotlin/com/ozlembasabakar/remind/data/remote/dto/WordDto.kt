@@ -14,7 +14,6 @@ data class WordDto(
     val wordType: String = "NOUN",
     val turkishTranslation: String = "",
     val imageUrl: String? = null,
-    val audioUrl: String? = null,
     val grammar: GrammarDto? = null,
     val examples: List<TenseExampleDto> = emptyList()
 )
@@ -42,11 +41,10 @@ data class TenseExampleDto(
 fun WordDto.toDomain(documentId: String): Vocabulary = Vocabulary(
     id = documentId,
     germanWord = germanWord,
-    article = runCatching { Article.valueOf(article.uppercase()) }.getOrDefault(Article.NONE),
-    wordType = runCatching { WordType.valueOf(wordType.uppercase()) }.getOrDefault(WordType.NOUN),
+    article = Article.from(article),
+    wordType = WordType.from(wordType),
     turkishTranslation = turkishTranslation,
     imageUrl = imageUrl,
-    audioUrl = audioUrl,
     grammar = grammar?.let {
         GrammarBreakdown(
             pluralForm = it.pluralForm,
@@ -62,7 +60,7 @@ fun WordDto.toDomain(documentId: String): Vocabulary = Vocabulary(
             germanSentence = german,
             turkishTranslation = turkish,
             targetWord = it.targetWord.ifEmpty { germanWord },
-            targetWordArticle = runCatching { Article.valueOf(it.targetWordArticle.uppercase()) }.getOrDefault(Article.NONE)
+            targetWordArticle = Article.from(it.targetWordArticle)
         )
     }
 )

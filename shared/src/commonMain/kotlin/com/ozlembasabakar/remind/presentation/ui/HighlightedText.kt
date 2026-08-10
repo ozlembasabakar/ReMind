@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import com.ozlembasabakar.remind.domain.model.Article
+import com.ozlembasabakar.remind.presentation.ui.util.color
 
 @Composable
 fun HighlightedExampleSentence(
@@ -21,7 +22,7 @@ fun HighlightedExampleSentence(
     modifier: Modifier = Modifier
 ) {
     val highlightColor = if (targetWordArticle != Article.NONE) {
-        Color(targetWordArticle.hexColor)
+        targetWordArticle.color
     } else {
         defaultHighlightColor
     }

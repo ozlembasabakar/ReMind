@@ -51,10 +51,9 @@ actual suspend fun fetchFirestoreRestWords(): List<Vocabulary>? = withContext(Di
             val wordTypeStr = getStringField(fields, "wordType") ?: "NOUN"
             val turkishTranslation = getStringField(fields, "turkishTranslation") ?: ""
             val imageUrl = getStringField(fields, "imageUrl")
-            val audioUrl = getStringField(fields, "audioUrl")
 
-            val article = runCatching { Article.valueOf(articleStr.uppercase()) }.getOrDefault(Article.NONE)
-            val wordType = runCatching { WordType.valueOf(wordTypeStr.uppercase()) }.getOrDefault(WordType.NOUN)
+            val article = Article.from(articleStr)
+            val wordType = WordType.from(wordTypeStr)
 
             val grammarObj = getMapFields(fields, "grammar")
             val grammar = grammarObj?.let { g ->
@@ -74,7 +73,7 @@ actual suspend fun fetchFirestoreRestWords(): List<Vocabulary>? = withContext(Di
                 else {
                     val target = getStringField(exFields, "targetWord") ?: germanWord
                     val targetArtStr = getStringField(exFields, "targetWordArticle") ?: "NONE"
-                    val targetArt = runCatching { Article.valueOf(targetArtStr.uppercase()) }.getOrDefault(Article.NONE)
+                    val targetArt = Article.from(targetArtStr)
                     TenseExample(
                         germanSentence = german,
                         turkishTranslation = turkish,
@@ -92,7 +91,6 @@ actual suspend fun fetchFirestoreRestWords(): List<Vocabulary>? = withContext(Di
                     wordType = wordType,
                     turkishTranslation = turkishTranslation,
                     imageUrl = imageUrl,
-                    audioUrl = audioUrl,
                     grammar = grammar,
                     examples = examples
                 )
