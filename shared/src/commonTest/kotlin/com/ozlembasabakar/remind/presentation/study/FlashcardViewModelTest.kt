@@ -1,7 +1,7 @@
 package com.ozlembasabakar.remind.presentation.study
 
 import com.ozlembasabakar.remind.data.audio.AudioPlayer
-import com.ozlembasabakar.remind.data.repository.InMemoryVocabularyRepository
+import com.ozlembasabakar.remind.data.repository.LocalMockVocabularyRepository
 import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.usecase.GetNextFlashcardUseCase
 import com.ozlembasabakar.remind.domain.usecase.PlayAudioUseCase
@@ -18,7 +18,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FlashcardViewModelTest {
@@ -26,9 +25,9 @@ class FlashcardViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
     class FakeAudioPlayer : AudioPlayer {
-        var playedUrl: String? = null
-        override suspend fun playAudio(urlOrAssetPath: String) {
-            playedUrl = urlOrAssetPath
+        var spokenText: String? = null
+        override suspend fun speakText(text: String) {
+            spokenText = text
         }
         override fun stop() {}
     }
@@ -45,7 +44,7 @@ class FlashcardViewModelTest {
 
     @Test
     fun testInitialLoadingAndCardState() = runTest {
-        val repository = InMemoryVocabularyRepository()
+        val repository = LocalMockVocabularyRepository()
         val viewModel = FlashcardViewModel(
             GetNextFlashcardUseCase(repository),
             ProcessSrsReviewUseCase(repository),
@@ -65,7 +64,7 @@ class FlashcardViewModelTest {
 
     @Test
     fun testFlipCardAndSeeFrontIntents() = runTest {
-        val repository = InMemoryVocabularyRepository()
+        val repository = LocalMockVocabularyRepository()
         val viewModel = FlashcardViewModel(
             GetNextFlashcardUseCase(repository),
             ProcessSrsReviewUseCase(repository),
@@ -83,7 +82,7 @@ class FlashcardViewModelTest {
 
     @Test
     fun testSubmitSrsRatingResetsToFrontAndStoresPreviousCard() = runTest {
-        val repository = InMemoryVocabularyRepository()
+        val repository = LocalMockVocabularyRepository()
         val viewModel = FlashcardViewModel(
             GetNextFlashcardUseCase(repository),
             ProcessSrsReviewUseCase(repository),
@@ -109,7 +108,7 @@ class FlashcardViewModelTest {
 
     @Test
     fun testUndoLastRatingRestoresPreviousCardOnBackSide() = runTest {
-        val repository = InMemoryVocabularyRepository()
+        val repository = LocalMockVocabularyRepository()
         val viewModel = FlashcardViewModel(
             GetNextFlashcardUseCase(repository),
             ProcessSrsReviewUseCase(repository),

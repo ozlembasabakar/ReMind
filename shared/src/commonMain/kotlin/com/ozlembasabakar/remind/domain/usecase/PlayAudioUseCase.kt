@@ -5,10 +5,8 @@ import com.ozlembasabakar.remind.data.audio.AudioPlayer
 class PlayAudioUseCase(
     private val audioPlayer: AudioPlayer
 ) {
-    suspend operator fun invoke(url: String?, textToSpeak: String = "") {
-        if (!url.isNullOrEmpty()) {
-            audioPlayer.playAudio(url)
-        } else if (textToSpeak.isNotEmpty()) {
+    suspend operator fun invoke(textToSpeak: String) {
+        if (textToSpeak.isNotBlank()) {
             audioPlayer.speakText(textToSpeak)
         }
     }

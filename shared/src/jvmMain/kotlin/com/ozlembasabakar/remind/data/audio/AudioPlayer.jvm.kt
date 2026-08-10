@@ -1,11 +1,6 @@
 package com.ozlembasabakar.remind.data.audio
 
 class JvmAudioPlayer : AudioPlayer {
-    override suspend fun playAudio(urlOrAssetPath: String) {
-        // Desktop / JVM fallback player simulation
-        println("Playing audio on JVM target: $urlOrAssetPath")
-    }
-
     override suspend fun speakText(text: String) {
         println("Pronouncing German word on Desktop JVM: '$text'")
         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {

@@ -7,7 +7,6 @@ data class Vocabulary(
     val wordType: WordType,
     val turkishTranslation: String,
     val imageUrl: String? = null,
-    val audioUrl: String? = null,
     val grammar: GrammarBreakdown? = null,
     val examples: List<TenseExample> = emptyList(),
     val srsStatus: SrsStatus = SrsStatus()

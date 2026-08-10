@@ -19,6 +19,7 @@ object FlashcardContract {
         val remainingCardsCount: Int = 0,
         val isAudioPlaying: Boolean = false,
         val isBookmarked: Boolean = false,
+        val isSessionCompleted: Boolean = false,
         val error: String? = null
     )
 
@@ -26,7 +27,7 @@ object FlashcardContract {
         data object LoadNextCard : UiIntent
         data object FlipCard : UiIntent
         data object SeeFront : UiIntent
-        data class PlayAudio(val audioUrl: String?) : UiIntent
+        data object PlayAudio : UiIntent
         data class SubmitSrsRating(val rating: SrsStatus.Rating) : UiIntent
         data object UndoLastRating : UiIntent
         data object ToggleBookmark : UiIntent

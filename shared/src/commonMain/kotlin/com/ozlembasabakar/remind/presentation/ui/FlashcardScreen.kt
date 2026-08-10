@@ -125,9 +125,7 @@ fun FlashcardScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = {
-                            viewModel.onIntent(
-                                FlashcardContract.UiIntent.PlayAudio(uiState.currentCard?.audioUrl)
-                            )
+                            viewModel.onIntent(FlashcardContract.UiIntent.PlayAudio)
                         }
                     ) {
                         Icon(

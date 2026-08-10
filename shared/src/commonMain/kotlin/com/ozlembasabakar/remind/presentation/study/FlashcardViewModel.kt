@@ -36,7 +36,7 @@ class FlashcardViewModel(
             is FlashcardContract.UiIntent.LoadNextCard -> loadNextCard()
             is FlashcardContract.UiIntent.FlipCard -> showBackCard()
             is FlashcardContract.UiIntent.SeeFront -> showFrontCard()
-            is FlashcardContract.UiIntent.PlayAudio -> playAudio(intent.audioUrl)
+            is FlashcardContract.UiIntent.PlayAudio -> playAudio()
             is FlashcardContract.UiIntent.SubmitSrsRating -> submitRating(intent.rating)
             is FlashcardContract.UiIntent.UndoLastRating -> undoLastRating()
             is FlashcardContract.UiIntent.ToggleBookmark -> toggleBookmark()
@@ -55,11 +55,12 @@ class FlashcardViewModel(
                         isLoading = false,
                         currentCard = card,
                         cardSide = FlashcardContract.CardSide.Front,
-                        isBookmarked = false
+                        isBookmarked = false,
+                        isSessionCompleted = false
                     )
                 }
             } else {
-                _uiState.update { it.copy(isLoading = false, currentCard = null) }
+                _uiState.update { it.copy(isLoading = false, currentCard = null, isSessionCompleted = true) }
                 _uiEffect.emit(FlashcardContract.UiEffect.StudySessionCompleted)
             }
         }
@@ -88,20 +89,19 @@ class FlashcardViewModel(
         }
     }
 
-    private fun playAudio(url: String?) {
-        val targetUrl = url ?: uiState.value.currentCard?.audioUrl
+    private fun playAudio() {
         val germanText = uiState.value.currentCard?.germanWord ?: ""
 
-        if (targetUrl.isNullOrEmpty() && germanText.isEmpty()) {
+        if (germanText.isEmpty()) {
             viewModelScope.launch {
-                _uiEffect.emit(FlashcardContract.UiEffect.AudioPlaybackFailed("No audio or word available"))
+                _uiEffect.emit(FlashcardContract.UiEffect.AudioPlaybackFailed("No word available"))
             }
             return
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isAudioPlaying = true) }
             runCatching {
-                playAudioUseCase(targetUrl, germanText)
+                playAudioUseCase(germanText)
             }.onFailure { ex ->
                 _uiEffect.emit(
                     FlashcardContract.UiEffect.AudioPlaybackFailed(

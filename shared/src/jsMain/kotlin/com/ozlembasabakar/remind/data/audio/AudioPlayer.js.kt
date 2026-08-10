@@ -1,13 +1,6 @@
 package com.ozlembasabakar.remind.data.audio
 
 class JsAudioPlayer : AudioPlayer {
-    override suspend fun playAudio(urlOrAssetPath: String) {
-        runCatching {
-            val audio = js("new Audio(urlOrAssetPath)")
-            audio.play()
-        }
-    }
-
     override suspend fun speakText(text: String) {
         runCatching {
             val utterance = js("new SpeechSynthesisUtterance(text)")
