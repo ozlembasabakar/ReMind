@@ -11,7 +11,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.math.max
 
-class InMemoryVocabularyRepository : VocabularyRepository {
+class LocalMockVocabularyRepository : VocabularyRepository {
     private val mutex = Mutex()
 
     private val cards = mutableListOf(
@@ -21,8 +21,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             article = Article.DER,
             wordType = WordType.NOUN,
             turkishTranslation = "Masa",
-            imageUrl = "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=500",
-            audioUrl = "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3",
             grammar = GrammarBreakdown(
                 pluralForm = "die Tische"
             ),
@@ -47,8 +45,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             article = Article.DIE,
             wordType = WordType.NOUN,
             turkishTranslation = "Kedi",
-            imageUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500",
-            audioUrl = "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3",
             grammar = GrammarBreakdown(
                 pluralForm = "die Katzen"
             ),
@@ -67,8 +63,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             article = Article.DAS,
             wordType = WordType.NOUN,
             turkishTranslation = "Kitap",
-            imageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500",
-            audioUrl = "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3",
             grammar = GrammarBreakdown(
                 pluralForm = "die Bücher"
             ),
@@ -87,8 +81,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             article = Article.NONE,
             wordType = WordType.VERB,
             turkishTranslation = "Gitmek",
-            imageUrl = "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=500",
-            audioUrl = "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3",
             grammar = GrammarBreakdown(
                 prasens = "geht",
                 prateritum = "ging",
@@ -121,8 +113,6 @@ class InMemoryVocabularyRepository : VocabularyRepository {
             article = Article.PLURAL,
             wordType = WordType.NOUN,
             turkishTranslation = "Çocuklar",
-            imageUrl = "https://images.unsplash.com/photo-1485546246426-74dc88dec4d9?w=500",
-            audioUrl = "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3",
             grammar = GrammarBreakdown(
                 pluralForm = "die Kinder (Singular: das Kind)"
             ),
@@ -140,8 +130,7 @@ class InMemoryVocabularyRepository : VocabularyRepository {
     private val reviewedIds = mutableSetOf<String>()
 
     override suspend fun getNextDueCard(): Vocabulary? = mutex.withLock {
-        // Return first card that hasn't been completed in this current deck session
-        cards.firstOrNull { it.id !in reviewedIds } ?: cards.firstOrNull()
+        cards.firstOrNull { it.id !in reviewedIds }
     }
 
     override suspend fun getRemainingCardsCount(): Int = mutex.withLock {

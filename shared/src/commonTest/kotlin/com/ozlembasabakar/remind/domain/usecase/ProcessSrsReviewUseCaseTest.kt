@@ -1,6 +1,6 @@
 package com.ozlembasabakar.remind.domain.usecase
 
-import com.ozlembasabakar.remind.data.repository.InMemoryVocabularyRepository
+import com.ozlembasabakar.remind.data.repository.LocalMockVocabularyRepository
 import com.ozlembasabakar.remind.domain.model.SrsStatus
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -11,7 +11,7 @@ class ProcessSrsReviewUseCaseTest {
 
     @Test
     fun testSrsRatingUpdatesIntervalAndRepetitions() = runTest {
-        val repository = InMemoryVocabularyRepository()
+        val repository = LocalMockVocabularyRepository()
         val getNextCard = GetNextFlashcardUseCase(repository)
         val processSrs = ProcessSrsReviewUseCase(repository)
 
@@ -31,7 +31,7 @@ class ProcessSrsReviewUseCaseTest {
 
     @Test
     fun testHardRatingResetsRepetitions() = runTest {
-        val repository = InMemoryVocabularyRepository()
+        val repository = LocalMockVocabularyRepository()
         val processSrs = ProcessSrsReviewUseCase(repository)
 
         processSrs("1", SrsStatus.Rating.EASY)
