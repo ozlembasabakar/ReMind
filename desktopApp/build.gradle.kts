@@ -13,7 +13,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(libs.kotlinx.coroutinesSwing)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.google.auth.oauth2)
+    implementation(libs.firebase.admin)
 
     implementation(libs.compose.uiToolingPreview)
 }

@@ -12,6 +12,7 @@ androidx-testExt = "1.3.0"
 composeMultiplatform = "1.11.1"
 firebase-bom = "33.9.0"
 firebase-gitlive = "2.1.0"
+firebase-admin = "9.3.0"
 google-auth-oauth2 = "1.23.0"
 google-services-plugin = "4.4.2"
 junit = "4.13.2"
@@ -22,6 +23,7 @@ kotlinx-serialization = "1.8.0"
 material3 = "1.11.0-alpha07"
 
 [libraries]
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebase-admin" }
 google-auth-oauth2 = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "google-auth-oauth2" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
