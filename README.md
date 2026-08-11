@@ -8,6 +8,24 @@ This project was created with the goal of building a modern cross-platform Germa
 
 ### Screenshots
 
+### Android
+
+<img width="256" height="512" alt="Screenshot_20260811_124336_com_ozlembasabakar_remind_MainActivity" src="https://github.com/user-attachments/assets/53e8268c-e83f-49dd-a4f8-49e22634cace" />
+<img width="256" height="512" alt="Screenshot_20260811_124340_com_ozlembasabakar_remind_MainActivity" src="https://github.com/user-attachments/assets/8939af06-0e82-4ac3-a9ff-2411d9710000" />
+
+
+https://github.com/user-attachments/assets/166163c4-b75e-4dd8-b06e-3b4574a6a3a6
+
+### Desktop
+
+<img width="512" height="450" alt="desktop_front" src="https://github.com/user-attachments/assets/1f575a54-19a2-4f0f-a01d-192792252891" />
+<img width="512" height="450" alt="desktop_back" src="https://github.com/user-attachments/assets/982d32f6-9737-4c74-91e0-7a2b620c5729" />
+
+### Web
+
+<img width="1000" height="500" alt="web_front" src="https://github.com/user-attachments/assets/4334ca74-9fc7-42b5-befc-9c039ae79021" />
+<img width="1000" height="500" alt="web_back" src="https://github.com/user-attachments/assets/532311db-5e13-4733-9206-7d197e433b67" />
+
 
 ---
 
