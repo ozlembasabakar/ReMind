@@ -228,11 +228,11 @@ fun BackCardView(
                 contentAlignment = Alignment.Center
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "⇆",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF616161)
+                    androidx.compose.material3.Icon(
+                        imageVector = AppIcons.FlipCard,
+                        contentDescription = "See Front",
+                        tint = Color(0xFF616161),
+                        modifier = Modifier.size(18.dp).align(Alignment.CenterVertically)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(

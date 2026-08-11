@@ -137,4 +137,64 @@ object AppIcons {
             }
         }.build()
     }
+
+    val FlipCard: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "FlipCard",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f
+        ).apply {
+            path(
+                fill = SolidColor(Color.Black),
+                pathFillType = PathFillType.NonZero
+            ) {
+                moveTo(6.99f, 11.0f)
+                lineTo(3.0f, 15.0f)
+                lineToRelative(3.99f, 4.0f)
+                verticalLineToRelative(-3.0f)
+                horizontalLineTo(14.0f)
+                verticalLineToRelative(-2.0f)
+                horizontalLineTo(6.99f)
+                verticalLineToRelative(-3.0f)
+                close()
+                moveTo(21.0f, 9.0f)
+                lineToRelative(-3.99f, -4.0f)
+                verticalLineToRelative(3.0f)
+                horizontalLineTo(10.0f)
+                verticalLineToRelative(2.0f)
+                horizontalLineToRelative(7.01f)
+                verticalLineToRelative(3.0f)
+                lineTo(21.0f, 9.0f)
+                close()
+            }
+        }.build()
+    }
+
+    val ArrowForward: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "ArrowForward",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f
+        ).apply {
+            path(
+                fill = SolidColor(Color.Black),
+                pathFillType = PathFillType.NonZero
+            ) {
+                moveTo(12.0f, 4.0f)
+                lineToRelative(-1.41f, 1.41f)
+                lineTo(16.17f, 11.0f)
+                horizontalLineTo(4.0f)
+                verticalLineToRelative(2.0f)
+                horizontalLineToRelative(12.17f)
+                lineToRelative(-5.58f, 5.59f)
+                lineTo(12.0f, 20.0f)
+                lineToRelative(8.0f, -8.0f)
+                close()
+            }
+        }.build()
+    }
 }

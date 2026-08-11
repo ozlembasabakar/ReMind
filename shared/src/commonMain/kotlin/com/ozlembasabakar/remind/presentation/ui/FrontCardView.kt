@@ -119,11 +119,11 @@ fun FrontCardView(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "⇆",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                    androidx.compose.material3.Icon(
+                        imageVector = AppIcons.FlipCard,
+                        contentDescription = "Flip Card",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp).align(Alignment.CenterVertically)
                     )
                     Spacer(modifier = Modifier.size(12.dp))
                     Text(
