@@ -17,3 +17,11 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+# Security & Secrets
+serviceAccountKey.json
+serviceAccountKey*.json
+*.json
+!androidApp/google-services.json
+!package*.json
+
