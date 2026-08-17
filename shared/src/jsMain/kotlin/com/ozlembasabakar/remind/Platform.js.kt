@@ -12,3 +12,7 @@ class JsPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = JsPlatform()
+
+actual val defaultBaseUrl: String = "http://localhost:8080"
+
+actual fun createPlatformHttpClient(): io.ktor.client.HttpClient = io.ktor.client.HttpClient(io.ktor.client.engine.js.Js)
