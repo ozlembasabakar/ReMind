@@ -1,7 +1,7 @@
 package com.ozlembasabakar.remind.data.repository
 
-import com.ozlembasabakar.remind.data.repository.dto.WordDto
-import com.ozlembasabakar.remind.data.repository.dto.toDomain
+import com.ozlembasabakar.remind.dto.WordDto
+import com.ozlembasabakar.remind.dto.toDomain
 import com.ozlembasabakar.remind.data.firebase.fetchFirestoreRestWords
 import com.ozlembasabakar.remind.data.firebase.initializeFirebase
 import com.ozlembasabakar.remind.domain.model.Article
