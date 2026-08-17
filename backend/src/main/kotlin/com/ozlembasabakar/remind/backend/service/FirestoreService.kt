@@ -17,7 +17,7 @@ class FirestoreService(private val db: Firestore) {
         val querySnapshot = wordsCollection.get().await()
         querySnapshot.documents.mapNotNull { doc ->
             try {
-                val data = doc.data
+                val data = doc.data ?: return@mapNotNull null
                 mapDocToWordDto(doc.id, data)
             } catch (e: Exception) {
                 println("Failed to parse document ${doc.id}: ${e.message}")
@@ -35,7 +35,7 @@ class FirestoreService(private val db: Firestore) {
 
         querySnapshot.documents.mapNotNull { doc ->
             try {
-                val data = doc.data
+                val data = doc.data ?: return@mapNotNull null
                 mapDocToWordDto(doc.id, data)
             } catch (e: Exception) {
                 println("Failed to parse due document ${doc.id}: ${e.message}")
@@ -51,7 +51,7 @@ class FirestoreService(private val db: Firestore) {
             val doc = transaction.get(docRef).get()
             if (!doc.exists()) return@runTransaction null
 
-            val data = doc.data
+            val data = doc.data ?: return@runTransaction null
             val currentDto = mapDocToWordDto(wordId, data)
             val currentSrs = currentDto.srsStatus ?: SrsStatusDto()
 

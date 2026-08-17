@@ -15,6 +15,10 @@ import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+@Deprecated(
+    message = "Clients communicate with Firestore exclusively through the Ktor Server backend via KtorVocabularyRepository.",
+    replaceWith = ReplaceWith("KtorVocabularyRepository", "com.ozlembasabakar.remind.data.repository.KtorVocabularyRepository")
+)
 class FirestoreVocabularyRepository(
     private val fallbackRepository: VocabularyRepository = LocalMockVocabularyRepository()
 ) : VocabularyRepository {
