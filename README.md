@@ -2,6 +2,9 @@
 
 This project was created with the goal of building a modern cross-platform German language learning application using **Kotlin Multiplatform (KMP)**, **Compose Multiplatform (Android, JVM Desktop & Web/JS Browser)**, **Cloud Firestore & Firebase REST API**, and **Spaced Repetition System (SRS) Algorithms**. Built entirely with Kotlin, Compose, and Clean Architecture. 🛠️
 
+### Implementation Details by Feature
+- **Backend Infrastructure:** Detailed setup and Ktor configuration can be found in the [Fullstack Documentation](https://github.com/ozlembasabakar/ReMind/blob/feature/fullstack-version/README.md).
+  
 ---
 
 ## UI
