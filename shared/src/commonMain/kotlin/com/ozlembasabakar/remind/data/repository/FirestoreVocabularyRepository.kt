@@ -1,7 +1,6 @@
 package com.ozlembasabakar.remind.data.repository
 
-import com.ozlembasabakar.remind.dto.WordDto
-import com.ozlembasabakar.remind.dto.toDomain
+import co.touchlab.kermit.Logger
 import com.ozlembasabakar.remind.data.firebase.initializeFirebase
 import com.ozlembasabakar.remind.domain.model.Article
 import com.ozlembasabakar.remind.domain.model.GrammarBreakdown
@@ -9,6 +8,8 @@ import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.model.TenseExample
 import com.ozlembasabakar.remind.domain.model.Vocabulary
 import com.ozlembasabakar.remind.domain.model.WordType
+import com.ozlembasabakar.remind.dto.WordDto
+import com.ozlembasabakar.remind.dto.toDomain
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.sync.Mutex
@@ -31,9 +32,11 @@ class FirestoreVocabularyRepository(
 
         try {
             initializeFirebase()
-            println("Fetching collection 'words' from Cloud Firestore...")
+            Logger.withTag("FirestoreVocabularyRepository")
+                .i { "Fetching collection 'words' from Cloud Firestore..." }
             val snapshot = Firebase.firestore.collection("words").get()
-            println("Firestore snapshot documents count: ${snapshot.documents.size}")
+            Logger.withTag("FirestoreVocabularyRepository")
+                .i { "Firestore snapshot documents count: ${snapshot.documents.size}" }
 
             val loaded = mutableListOf<Vocabulary>()
             for (doc in snapshot.documents) {
@@ -93,7 +96,8 @@ class FirestoreVocabularyRepository(
                             )
                         }
                     } catch (inner: Exception) {
-                        println("Failed to decode doc '${doc.id}': ${inner.message}")
+                        Logger.withTag("FirestoreVocabularyRepository")
+                            .e(inner) { "Failed to decode doc '${doc.id}'" }
                         null
                     }
                 }
@@ -104,17 +108,21 @@ class FirestoreVocabularyRepository(
             }
 
             if (loaded.isNotEmpty()) {
-                println("Successfully loaded ${loaded.size} cards from Cloud Firestore!")
+                Logger.withTag("FirestoreVocabularyRepository")
+                    .i { "Successfully loaded ${loaded.size} cards from Cloud Firestore!" }
                 cachedCards = loaded.shuffled()
                 return@withLock cachedCards
             } else {
-                println("Loaded document list is empty after decoding.")
+                Logger.withTag("FirestoreVocabularyRepository")
+                    .w { "Loaded document list is empty after decoding." }
             }
         } catch (e: Exception) {
-            println("Firestore collection fetch EXCEPTION: ${e::class.simpleName} - ${e.message}")
+            Logger.withTag("FirestoreVocabularyRepository")
+                .e(e) { "Firestore collection fetch EXCEPTION: ${e::class.simpleName}" }
         }
 
-        println("Firestore returned no cards or threw an exception. Falling back to local memory.")
+        Logger.withTag("FirestoreVocabularyRepository")
+            .w { "Firestore returned no cards or threw an exception. Falling back to local memory." }
         val fallbackCards = fallbackRepository.getAllCards().shuffled()
         cachedCards = fallbackCards
         fallbackCards

@@ -1,5 +1,6 @@
 package com.ozlembasabakar.remind.data.firebase
 
+import co.touchlab.kermit.Logger
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.FirebaseOptions
 import dev.gitlive.firebase.initialize
@@ -17,9 +18,11 @@ actual fun initializeFirebase() {
             )
             Firebase.initialize(options = options)
             isInitialized = true
-            println("GitLive Firebase initialized successfully on JVM Desktop.")
+            Logger.withTag("FirebaseInitializer")
+                .i { "GitLive Firebase initialized successfully on JVM Desktop." }
         }.onFailure { e ->
-            println("Failed to initialize GitLive Firebase on JVM: ${e.message}")
+            Logger.withTag("FirebaseInitializer")
+                .e(e) { "Failed to initialize GitLive Firebase on JVM" }
         }
     }
 }

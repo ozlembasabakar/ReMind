@@ -1,8 +1,11 @@
 package com.ozlembasabakar.remind.data.audio
 
+import co.touchlab.kermit.Logger
+
 class JvmAudioPlayer : AudioPlayer {
     override suspend fun speakText(text: String) {
-        println("Pronouncing German word on Desktop JVM: '$text'")
+        Logger.withTag("JvmAudioPlayer")
+            .i { "Pronouncing German word on Desktop JVM: '$text'" }
         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
             runCatching {
                 val os = System.getProperty("os.name").lowercase()
@@ -31,7 +34,8 @@ class JvmAudioPlayer : AudioPlayer {
                     ProcessBuilder("spd-say", "-l", "de", text).start()
                 }
             }.onFailure { ex ->
-                println("Desktop TTS exception: ${ex.message}")
+                Logger.withTag("JvmAudioPlayer")
+                    .e(ex) { "Desktop TTS exception" }
             }
         }
     }

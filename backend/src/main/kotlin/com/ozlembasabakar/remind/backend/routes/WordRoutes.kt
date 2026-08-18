@@ -15,14 +15,26 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HealthStatusDto(
-    val status: String = "ok",
-    val service: String = "ReMind Backend"
+    val status: String = "UP",
+    val service: String = "ReMind Backend",
+    val databaseConnected: Boolean = true,
+    val freeMemoryMb: Long = 0L,
+    val totalMemoryMb: Long = 0L,
 )
 
 fun Route.configureWordRoutes(firestoreService: FirestoreService) {
     route("/health") {
         get {
-            call.respond<ApiResponse<HealthStatusDto>>(ApiResponse.success(HealthStatusDto()))
+            val runtime = Runtime.getRuntime()
+            val dbConnected = runCatching { firestoreService.checkConnection() }.getOrDefault(false)
+            val health = HealthStatusDto(
+                status = if (dbConnected) "UP" else "DEGRADED",
+                service = "ReMind Backend",
+                databaseConnected = dbConnected,
+                freeMemoryMb = runtime.freeMemory() / (1024 * 1024),
+                totalMemoryMb = runtime.totalMemory() / (1024 * 1024)
+            )
+            call.respond<ApiResponse<HealthStatusDto>>(ApiResponse.success(health))
         }
     }
 

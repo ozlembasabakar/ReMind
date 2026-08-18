@@ -1,5 +1,7 @@
 package com.ozlembasabakar.remind.data.audio
 
+import co.touchlab.kermit.Logger
+
 class JsAudioPlayer : AudioPlayer {
     override suspend fun speakText(text: String) {
         runCatching {
@@ -7,7 +9,8 @@ class JsAudioPlayer : AudioPlayer {
             utterance.lang = "de-DE"
             js("window.speechSynthesis.speak(utterance)")
         }.onFailure { ex ->
-            println("Web TTS exception: ${ex.message}")
+            Logger.withTag("JsAudioPlayer")
+                .e(ex) { "Web TTS exception" }
         }
     }
 

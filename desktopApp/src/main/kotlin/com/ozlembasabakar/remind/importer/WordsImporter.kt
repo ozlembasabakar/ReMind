@@ -2,15 +2,22 @@ package com.ozlembasabakar.remind.importer
 
 import com.google.auth.oauth2.GoogleCredentials
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
 import java.net.HttpURLConnection
-import java.net.URL
 import java.nio.charset.StandardCharsets
 
 const val PROJECT_ID = "remind-98595"
 const val FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/$PROJECT_ID/databases/(default)/documents/words"
+
+private val logger = LoggerFactory.getLogger("WordsImporter")
 
 @OptIn(ExperimentalSerializationApi::class)
 fun main() {
@@ -23,11 +30,13 @@ fun main() {
     val serviceAccountFile = candidateKeys.firstOrNull { it.exists() }
 
     if (!wordsFile.exists()) {
-        println("ERROR: words.json not found at ${wordsFile.absolutePath}")
+        logger.error("words.json not found at {}", wordsFile.absolutePath)
         return
     }
     if (serviceAccountFile == null || !serviceAccountFile.exists()) {
-        println("ERROR: Service account key not found. Tried paths: ${candidateKeys.map { it.absolutePath }}")
+        logger.error(
+            "Service account key not found. Tried paths: {}",
+            candidateKeys.map { it.absolutePath })
         return
     }
 
@@ -38,7 +47,7 @@ fun main() {
     }
 
     val rawText = wordsFile.readText(Charsets.UTF_8)
-    println("Read words.json (${rawText.length} characters)")
+    logger.info("Read words.json ({} characters)", rawText.length)
 
     val objectStrings = mutableListOf<String>()
     var depth = 0
@@ -80,14 +89,14 @@ fun main() {
         }
     }
 
-    println("Extracted ${objectStrings.size} JSON objects from file.")
+    logger.info("Extracted {} JSON objects from file.", objectStrings.size)
 
-    println("Authenticating with Google Service Account...")
+    logger.info("Authenticating with Google Service Account...")
     val credentials = GoogleCredentials.fromStream(FileInputStream(serviceAccountFile))
         .createScoped(listOf("https://www.googleapis.com/auth/datastore"))
     credentials.refresh()
     val token = credentials.accessToken.tokenValue
-    println("Authentication successful!")
+    logger.info("Authentication successful!")
 
     var uploaded = 0
     var skipped = 0
@@ -103,7 +112,7 @@ fun main() {
             try {
                 json.parseToJsonElement(objStr)
             } catch (e2: Exception) {
-                println("⚠️ Skipping malformed item #$index: ${e2.message}")
+                logger.warn("Skipping malformed item #{}: {}", index, e2.message)
                 skipped++
                 continue
             }
@@ -176,15 +185,15 @@ fun main() {
         if (success) {
             uploaded++
             if (uploaded % 50 == 0) {
-                println("  Uploaded $uploaded / ${objectStrings.size} words...")
+                logger.info("Uploaded {} / {} words...", uploaded, objectStrings.size)
             }
         } else {
-            println("  Failed to upload '$germanWord'")
+            logger.warn("Failed to upload '{}'", germanWord)
             skipped++
         }
     }
 
-    println("\n✅ FINISHED! Total Uploaded to Firestore: $uploaded | Skipped: $skipped")
+    logger.info("FINISHED! Total Uploaded to Firestore: {} | Skipped: {}", uploaded, skipped)
 }
 
 private fun stringField(value: String): JsonObject = JsonObject(mapOf("stringValue" to JsonPrimitive(value)))
@@ -193,7 +202,7 @@ private fun arrayField(list: List<JsonObject>): JsonObject = JsonObject(mapOf("a
 
 private fun postToFirestore(accessToken: String, jsonBody: String): Boolean {
     return try {
-        val url = URL(FIRESTORE_URL)
+        val url = java.net.URI.create(FIRESTORE_URL).toURL()
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "POST"
         conn.setRequestProperty("Authorization", "Bearer $accessToken")
@@ -208,7 +217,7 @@ private fun postToFirestore(accessToken: String, jsonBody: String): Boolean {
         val responseCode = conn.responseCode
         responseCode in 200..299
     } catch (e: Exception) {
-        println("HTTP Error: ${e.message}")
+        logger.error("HTTP Error: {}", e.message)
         false
     }
 }

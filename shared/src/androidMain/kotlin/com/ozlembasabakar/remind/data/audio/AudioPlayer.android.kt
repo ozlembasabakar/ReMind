@@ -1,7 +1,7 @@
 package com.ozlembasabakar.remind.data.audio
 
-import android.media.AudioAttributes
 import android.media.MediaPlayer
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -12,7 +12,8 @@ class AndroidAudioPlayer : AudioPlayer {
     override suspend fun speakText(text: String) {
         val context = com.ozlembasabakar.remind.AndroidContext.applicationContext
         if (context == null) {
-            println("AndroidContext applicationContext is null, cannot speak text")
+            Logger.withTag("AndroidAudioPlayer")
+                .w { "AndroidContext applicationContext is null, cannot speak text" }
             return
         }
         withContext(Dispatchers.Main) {

@@ -9,9 +9,22 @@ import kotlinx.coroutines.Dispatchers
 import com.ozlembasabakar.remind.backend.util.await
 import kotlinx.coroutines.withContext
 
+import org.slf4j.LoggerFactory
+
 class FirestoreService(private val db: Firestore) {
 
+    private val logger = LoggerFactory.getLogger(FirestoreService::class.java)
     private val wordsCollection = db.collection("words")
+
+    suspend fun checkConnection(): Boolean = withContext(Dispatchers.IO) {
+        try {
+            wordsCollection.limit(1).get().await()
+            true
+        } catch (e: Exception) {
+            logger.error("Firestore health check failed: {}", e.message)
+            false
+        }
+    }
 
     suspend fun getAllWords(): List<WordDto> = withContext(Dispatchers.IO) {
         val querySnapshot = wordsCollection.get().await()
@@ -20,7 +33,7 @@ class FirestoreService(private val db: Firestore) {
                 val data = doc.data ?: return@mapNotNull null
                 mapDocToWordDto(doc.id, data)
             } catch (e: Exception) {
-                println("Failed to parse document ${doc.id}: ${e.message}")
+                logger.error("Failed to parse document {}: {}", doc.id, e.message)
                 null
             }
         }
@@ -37,7 +50,7 @@ class FirestoreService(private val db: Firestore) {
                 val nextReview = dto.srsStatus?.nextReviewAtEpochMs ?: 0L
                 if (nextReview <= now) dto else null
             } catch (e: Exception) {
-                println("Failed to parse due document ${doc.id}: ${e.message}")
+                logger.error("Failed to parse due document {}: {}", doc.id, e.message)
                 null
             }
         }

@@ -1,9 +1,10 @@
 package com.ozlembasabakar.remind.data.repository
 
+import co.touchlab.kermit.Logger
 import com.ozlembasabakar.remind.data.remote.RemindApiClient
-import com.ozlembasabakar.remind.dto.toDomain
 import com.ozlembasabakar.remind.domain.model.SrsStatus
 import com.ozlembasabakar.remind.domain.model.Vocabulary
+import com.ozlembasabakar.remind.dto.toDomain
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -23,7 +24,8 @@ class KtorVocabularyRepository(
             val dtoList = apiClient.getDueWords()
             var cards = dtoList.map { it.toDomain() }
             if (cards.isEmpty()) {
-                println("Backend returned empty due words. Fetching all words as fallback...")
+                Logger.withTag("KtorVocabularyRepository")
+                    .i { "Backend returned empty due words. Fetching all words as fallback..." }
                 val allDtoList = apiClient.getAllWords()
                 cards = allDtoList.map { it.toDomain() }
             }
@@ -32,7 +34,8 @@ class KtorVocabularyRepository(
                 return@withLock dueCardsCache
             }
         } catch (e: Exception) {
-            println("Error fetching due cards from Ktor backend: ${e.message}")
+            Logger.withTag("KtorVocabularyRepository")
+                .w { "Error fetching due cards from Ktor backend: ${e.message}" }
             try {
                 val allDtoList = apiClient.getAllWords()
                 val cards = allDtoList.map { it.toDomain() }
@@ -41,11 +44,13 @@ class KtorVocabularyRepository(
                     return@withLock dueCardsCache
                 }
             } catch (inner: Exception) {
-                println("Error fetching all cards from Ktor backend: ${inner.message}")
+                Logger.withTag("KtorVocabularyRepository")
+                    .w { "Error fetching all cards from Ktor backend: ${inner.message}" }
             }
         }
 
-        println("Ktor backend returned no cards or failed to connect. Falling back to local mock repository.")
+        Logger.withTag("KtorVocabularyRepository")
+            .w { "Ktor backend returned no cards or failed to connect. Falling back to local mock repository." }
         val fallbackCards = fallbackRepository.getAllCards()
         dueCardsCache = fallbackCards.shuffled()
         dueCardsCache
@@ -72,7 +77,8 @@ class KtorVocabularyRepository(
         try {
             apiClient.postSrsReview(id, rating.name)
         } catch (e: Exception) {
-            println("Failed to sync SRS review with Ktor backend: ${e.message}")
+            Logger.withTag("KtorVocabularyRepository")
+                .e(e) { "Failed to sync SRS review with Ktor backend" }
         }
     }
 
@@ -82,7 +88,8 @@ class KtorVocabularyRepository(
             val domainCards = dtoList.map { it.toDomain() }
             domainCards.ifEmpty { fallbackRepository.getAllCards() }
         } catch (e: Exception) {
-            println("Error fetching all cards from Ktor backend: ${e.message}")
+            Logger.withTag("KtorVocabularyRepository")
+                .e(e) { "Error fetching all cards from Ktor backend" }
             fallbackRepository.getAllCards()
         }
     }

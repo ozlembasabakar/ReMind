@@ -23,8 +23,10 @@ kotlinx-serialization = "1.8.0"
 material3 = "1.11.0-alpha07"
 ktor = "3.1.1"
 logback = "1.5.16"
+kermit = "2.0.5"
 
 [libraries]
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlinx-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutinesGuava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinx-coroutines" }
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
