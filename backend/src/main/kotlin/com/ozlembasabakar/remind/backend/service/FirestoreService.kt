@@ -28,15 +28,14 @@ class FirestoreService(private val db: Firestore) {
 
     suspend fun getDueWords(): List<WordDto> = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
-        val querySnapshot = wordsCollection
-            .whereLessThanOrEqualTo("srsStatus.nextReviewAtEpochMs", now)
-            .get()
-            .await()
+        val querySnapshot = wordsCollection.get().await()
 
         querySnapshot.documents.mapNotNull { doc ->
             try {
                 val data = doc.data ?: return@mapNotNull null
-                mapDocToWordDto(doc.id, data)
+                val dto = mapDocToWordDto(doc.id, data)
+                val nextReview = dto.srsStatus?.nextReviewAtEpochMs ?: 0L
+                if (nextReview <= now) dto else null
             } catch (e: Exception) {
                 println("Failed to parse due document ${doc.id}: ${e.message}")
                 null
