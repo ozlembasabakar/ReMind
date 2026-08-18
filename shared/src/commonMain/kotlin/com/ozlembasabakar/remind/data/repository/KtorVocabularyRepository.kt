@@ -8,7 +8,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class KtorVocabularyRepository(
-    private val apiClient: RemindApiClient = RemindApiClient()
+    private val apiClient: RemindApiClient = RemindApiClient(),
+    private val fallbackRepository: VocabularyRepository = LocalMockVocabularyRepository()
 ) : VocabularyRepository {
 
     private val mutex = Mutex()
@@ -20,12 +21,34 @@ class KtorVocabularyRepository(
 
         try {
             val dtoList = apiClient.getDueWords()
-            dueCardsCache = dtoList.map { it.toDomain() }.shuffled()
-            dueCardsCache
+            var cards = dtoList.map { it.toDomain() }
+            if (cards.isEmpty()) {
+                println("Backend returned empty due words. Fetching all words as fallback...")
+                val allDtoList = apiClient.getAllWords()
+                cards = allDtoList.map { it.toDomain() }
+            }
+            if (cards.isNotEmpty()) {
+                dueCardsCache = cards.shuffled()
+                return@withLock dueCardsCache
+            }
         } catch (e: Exception) {
             println("Error fetching due cards from Ktor backend: ${e.message}")
-            emptyList()
+            try {
+                val allDtoList = apiClient.getAllWords()
+                val cards = allDtoList.map { it.toDomain() }
+                if (cards.isNotEmpty()) {
+                    dueCardsCache = cards.shuffled()
+                    return@withLock dueCardsCache
+                }
+            } catch (inner: Exception) {
+                println("Error fetching all cards from Ktor backend: ${inner.message}")
+            }
         }
+
+        println("Ktor backend returned no cards or failed to connect. Falling back to local mock repository.")
+        val fallbackCards = fallbackRepository.getAllCards()
+        dueCardsCache = fallbackCards.shuffled()
+        dueCardsCache
     }
 
     override suspend fun getNextDueCard(): Vocabulary? {
@@ -56,10 +79,11 @@ class KtorVocabularyRepository(
     override suspend fun getAllCards(): List<Vocabulary> {
         return try {
             val dtoList = apiClient.getAllWords()
-            dtoList.map { it.toDomain() }
+            val domainCards = dtoList.map { it.toDomain() }
+            domainCards.ifEmpty { fallbackRepository.getAllCards() }
         } catch (e: Exception) {
             println("Error fetching all cards from Ktor backend: ${e.message}")
-            emptyList()
+            fallbackRepository.getAllCards()
         }
     }
 }
