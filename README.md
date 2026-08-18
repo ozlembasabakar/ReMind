@@ -1,205 +1,158 @@
-# ReMind
+# ReMind Ktor Server Backend
 
-This project was created with the goal of building a modern cross-platform German language learning application using **Kotlin Multiplatform (KMP)**, **Compose Multiplatform (Android, JVM Desktop & Web/JS Browser)**, **Cloud Firestore & Firebase REST API**, and **Spaced Repetition System (SRS) Algorithms**. Built entirely with Kotlin, Compose, and Clean Architecture. 🛠️
+This repository branch (`feature/fullstack-version`) houses the **Ktor REST Server Backend** and Full-Stack architecture for the **ReMind** Kotlin Multiplatform (KMP) German vocabulary learning application.
 
----
-
-## UI
-
-### Screenshots
-
-### Android
-
-<img width="256" height="512" alt="Screenshot_20260811_124336_com_ozlembasabakar_remind_MainActivity" src="https://github.com/user-attachments/assets/53e8268c-e83f-49dd-a4f8-49e22634cace" />
-<img width="256" height="512" alt="Screenshot_20260811_124340_com_ozlembasabakar_remind_MainActivity" src="https://github.com/user-attachments/assets/8939af06-0e82-4ac3-a9ff-2411d9710000" />
-
-
-https://github.com/user-attachments/assets/166163c4-b75e-4dd8-b06e-3b4574a6a3a6
-
-### Desktop
-
-<img width="512" height="450" alt="desktop_front" src="https://github.com/user-attachments/assets/1f575a54-19a2-4f0f-a01d-192792252891" />
-<img width="512" height="450" alt="desktop_back" src="https://github.com/user-attachments/assets/982d32f6-9737-4c74-91e0-7a2b620c5729" />
-
-### Web
-
-<img width="1000" height="500" alt="web_front" src="https://github.com/user-attachments/assets/4334ca74-9fc7-42b5-befc-9c039ae79021" />
-<img width="1000" height="500" alt="web_back" src="https://github.com/user-attachments/assets/532311db-5e13-4733-9206-7d197e433b67" />
-
+The backend acts as an asynchronous, non-blocking gateway between cross-platform Compose clients (Android, Desktop JVM, and Web JS) and **Cloud Firestore**, encapsulating database transactions, telemetry monitoring, and security controls. 🛠️
 
 ---
 
-## Unidirectional Data Flow (UDF) & Unified State
-
-> A unidirectional data flow (UDF) is a design pattern where state flows down and events flow up. By following unidirectional data flow, you can decouple composables that display state in the UI from the parts of your app that store and change state.
-
-By following the Unidirectional Data Flow approach, we achieve a clear separation of concerns. The vocabulary card state, card side flip state, audio playback status, and remaining cards count are decoupled from the UI components, making them easier to understand, test, and maintain.
-
-Additionally, the predictability of data flow simplifies debugging, as you can trace user review ratings (`SubmitSrsRating`), undo actions (`UndoLastRating`), and state updates throughout the learning session.
-
-In [`FlashcardContract.kt`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/shared/src/commonMain/kotlin/com/ozlembasabakar/remind/presentation/FlashcardContract.kt), the unified `UiState` is declared as:
-
-```kotlin
-object FlashcardContract {
-
-    sealed interface CardSide {
-        data object Front : CardSide
-        data object Back : CardSide
-    }
-
-    data class UiState(
-        val isLoading: Boolean = true,
-        val currentCard: Vocabulary? = null,
-        val previousCard: Vocabulary? = null,
-        val previousRating: SrsStatus.Rating? = null,
-        val cardSide: CardSide = CardSide.Front,
-        val remainingCardsCount: Int = 0,
-        val isAudioPlaying: Boolean = false,
-        val isBookmarked: Boolean = false,
-        val isSessionCompleted: Boolean = false,
-        val error: String? = null
-    )
-
-    sealed interface UiIntent {
-        data object LoadNextCard : UiIntent
-        data object FlipCard : UiIntent
-        data object SeeFront : UiIntent
-        data object PlayAudio : UiIntent
-        data class SubmitSrsRating(val rating: SrsStatus.Rating) : UiIntent
-        data object UndoLastRating : UiIntent
-        data object ToggleBookmark : UiIntent
-        data object NavigateBack : UiIntent
-        data object Retry : UiIntent
-    }
-}
-```
-
-In the UI layer ([`FlashcardScreen.kt`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/shared/src/commonMain/kotlin/com/ozlembasabakar/remind/presentation/ui/FlashcardScreen.kt)), state and side-effects are collected reactively from `FlashcardViewModel`:
-
-```kotlin
-@Composable
-fun FlashcardScreen(
-    viewModel: FlashcardViewModel,
-    onNavigateBack: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(Unit) {
-        viewModel.uiEffect.collectLatest { effect ->
-            when (effect) {
-                is FlashcardContract.UiEffect.ShowToast -> {
-                    snackbarHostState.showSnackbar(effect.message)
-                }
-                is FlashcardContract.UiEffect.ShowUndoSnackbar -> {
-                    val result = snackbarHostState.showSnackbar(
-                        message = effect.message,
-                        actionLabel = "Undo",
-                        duration = SnackbarDuration.Short
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(FlashcardContract.UiIntent.UndoLastRating)
-                    }
-                }
-                is FlashcardContract.UiEffect.NavigateBack -> {
-                    onNavigateBack?.invoke()
-                }
-                else -> {}
-            }
-        }
-    }
-    
-    // UI layout automatically recomposes when uiState updates
-}
-```
-
-In [`App.kt`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/shared/src/commonMain/kotlin/com/ozlembasabakar/remind/App.kt), the entry point uses [`AppModule`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/shared/src/commonMain/kotlin/com/ozlembasabakar/remind/di/AppModule.kt) dependency injection to decouple UI composables from concrete data repositories:
-
-```kotlin
-@Composable
-@Preview
-fun App() {
-    val viewModel = remember {
-        AppModule.provideFlashcardViewModel()
-    }
-
-    MaterialTheme {
-        FlashcardScreen(viewModel = viewModel)
-    }
-}
-```
-
-### Dependency Injection: Manual DI (`AppModule`) vs. Framework DI (Koin / Hilt)
-
-> Dependency Injection (DI) is a technique where an object receives its dependencies from an external provider rather than instantiating them directly.
-
-To enforce strict Clean Architecture boundaries and prevent UI composables from leaking data-layer concretions (`FirestoreVocabularyRepository`), the application uses a lightweight, compile-time safe **`AppModule`** DI container.
-
-#### Architectural Rationale & Trade-offs:
-
-- **Manual DI (`AppModule`):** Chosen for ReMind to guarantee **100% compile-time safety**, zero third-party framework overhead, and instant build times across Android, Desktop JVM, and Web targets.
-- **Koin & Dagger Hilt Comparison:** Dagger Hilt is Android-only and cannot run in KMP `commonMain`. Frameworks like Koin offer dynamic scope management for large multi-screen applications. For ReMind's clean architecture layout, `AppModule` provides optimal performance, while allowing seamless future migration to Koin as feature sets expand.
-
----
-
-## Multiplatform Architecture (Android, Desktop & Web)
-
-The application follows Modern Android and Kotlin Multiplatform (KMP) Clean Architecture guidelines, separating concerns into isolated layers and supporting multiple platform targets:
+## 🏛️ System Architecture
 
 ```mermaid
 graph TD
-    subgraph :shared Module
-        domain[domain: models & SRS use cases]
-        data[data: repositories, DTOs & Firestore]
-        presentation[presentation: FlashcardViewModel & Compose UI]
+    subgraph Clients (Compose Multiplatform)
+        android[Android Target]
+        desktop[Desktop JVM Target]
+        web[Web JS Target]
     end
 
-    subgraph Platform Targets
-        android[androidApp: Android Target]
-        desktop[desktopApp: JVM Desktop Target]
-        web[jsMain: Web / Browser Target]
+    subgraph Ktor Backend Service (:backend)
+        netty[Netty Engine :8080]
+        config[BackendConfig Environment]
+        statusPages[StatusPages Centralized Error Handler]
+        callLogging[SLF4J / Logback Logging]
+        wordRoutes[WordRoutes /api/v1/]
+        firestoreService[FirestoreService]
+        futureUtils[ApiFuture.await Coroutines]
     end
 
-    android --> presentation
-    desktop --> presentation
-    web --> presentation
-    presentation --> domain
-    data --> domain
+    subgraph Database Layer
+        firestore[Google Cloud Firestore]
+    end
+
+    android -->|HTTP / REST JSON| netty
+    desktop -->|HTTP / REST JSON| netty
+    web -->|HTTP / REST JSON| netty
+    netty --> config
+    netty --> statusPages
+    netty --> callLogging
+    netty --> wordRoutes
+    wordRoutes --> firestoreService
+    firestoreService --> futureUtils
+    futureUtils -->|Firebase Admin SDK| firestore
 ```
 
-### Supported Platforms:
-- **Android (`androidApp`):** Native Android app built with Jetpack Compose & Firebase Android SDK.
-- **JVM Desktop (`desktopApp`):** Desktop application built with Compose for Desktop & Firestore REST API.
-- **Web (`jsMain`):** Web application compiled via Kotlin/JS & Kotlin Browser wrappers for Web targets.
+---
+
+## 📡 REST API Endpoint Specification (`/api/v1/`)
+
+All API routes return standardized JSON payloads wrapped in the `ApiResponse<T>` generic DTO structure:
+
+```json
+{
+  "success": true,
+  "data": { ... },
+  "error": null
+}
+```
+
+### Endpoints Status
+
+| Method | Endpoint | Status | Description | Response Data DTO |
+| :--- | :--- | :---: | :--- | :--- |
+| `GET` | `/health` | ✅ Active | Live backend telemetry, Firestore connection status & JVM memory metrics | `HealthStatusDto` |
+| `GET` | `/api/v1/words` | ✅ Active | Primary endpoint returning German vocabulary items from Cloud Firestore | `List<WordDto>` |
+| `GET` | `/api/v1/words/due` | ⏸️ Out of Use | Query route for SRS due filtering (disabled in v1 release) | `List<WordDto>` |
+| `POST` | `/api/v1/srs/review` | 🛠️ Planned | SRS transaction update endpoint (reserved for future release) | `WordDto` |
 
 ---
 
-## Senior Tech Lead Evaluation: AI-Orchestrated Development Model
+## 🛠️ Backend Engineering Best Practices Implemented
+
+### 1. Structured Logging & Monitoring
+- **Server Logging**: Configured **SLF4J** with **Logback** ([`logback.xml`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/backend/src/main/resources/logback.xml)) for timestamped console log formatting.
+- **Client Logging**: Integrated **Touchlab Kermit** (`co.touchlab.kermit.Logger`) for native multiplatform logging on Android, JVM, and JS targets.
+- **Telemetry Monitoring**: `/health` endpoint exposes live DB health and JVM memory telemetry:
+  ```json
+  {
+    "status": "UP",
+    "service": "ReMind Backend",
+    "apiVersion": "v1",
+    "databaseConnected": true,
+    "freeMemoryMb": 184,
+    "totalMemoryMb": 512
+  }
+  ```
+
+### 2. Centralized Error Handling & Exception Management
+- Installed Ktor **`StatusPages`** plugin in [`Application.kt`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/backend/src/main/kotlin/com/ozlembasabakar/remind/backend/Application.kt).
+- Intercepts all uncaught exceptions (`500`), invalid parameters (`400`), and missing routes (`404`), returning uniform `ApiResponse.error(code, message)` JSON payloads without crashing the server or exposing raw stack traces.
+
+### 3. Type-Safe Environment Management
+- Centralized configuration loader in [`BackendConfig.kt`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/backend/src/main/kotlin/com/ozlembasabakar/remind/backend/config/BackendConfig.kt).
+- Dynamically resolves `PORT` (default `8080`), `HOST` (default `0.0.0.0`), `APP_ENV` (`development`/`production`), and `GOOGLE_APPLICATION_CREDENTIALS`.
+- Automatically checks `System.getProperty("user.home")` for local credential keys (`~/.credentials/remind-service-account-key.json`).
+- Provided [`.env.example`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/.env.example) template for environment setup.
+
+### 4. Asynchronous Coroutines & Concurrency
+- Runs on non-blocking Netty engine.
+- Enhanced `ApiFuture<T>.await()` ([`ApiFutureUtils.kt`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/backend/src/main/kotlin/com/ozlembasabakar/remind/backend/util/ApiFutureUtils.kt)) with coroutine cancellation (`continuation.invokeOnCancellation { cancel(true) }`).
+- Enforces `withContext(Dispatchers.IO)` across all Firestore database operations.
+
+### 5. Versioning & Security Control
+- Explicit `/api/v1/` REST route scoping.
+- Restricts CORS origins when `APP_ENV=production`.
+- Hardened [`.gitignore`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/.gitignore) preventing service account keys and environment secrets from leaking to Git.
+- Documented project workflow in [`GIT_WORKFLOW.md`](file:///D:/Program%20Files%20%28x86%29/AndroidProjects/ReMind/GIT_WORKFLOW.md).
+
+---
+
+## 🚀 How to Run the Backend
+
+### Start Server Locally
+```powershell
+./gradlew :backend:run
+```
+The server will start listening at `http://127.0.0.1:8080`.
+
+### Physical Android Device Setup
+When testing with a physical Android device over USB/Wi-Fi:
+```powershell
+adb reverse tcp:8080 tcp:8080
+```
+---
+
+## 👔 Senior Tech Lead Evaluation: Fullstack Architecture & Engineering Excellence
 
 > [!NOTE]
-> **Executive Summary & Architectural Leadership Assessment**
+> **Fullstack Architecture & Backend Engineering Assessment**
 >
-> This repository stands as a high-yield case study in **AI-orchestrated software engineering**. In this project model, human leadership and technical ownership drive high-level system architecture, while AI execution agents accelerate boilerplate generation, dataset transformations, and boilerplate scaffolding.
+> Transitioning ReMind from a client-only frontend to an enterprise-grade **Fullstack KMP + Ktor Architecture** represents a major architectural milestone. This evaluation highlights the fullstack engineering choices, non-blocking coroutine design, and security isolation implemented across the `:backend` and `:shared` modules.
 
-### Architect & Product Owner Role
-- **Architectural Control & System Design:** The primary architect defined all foundational interfaces (`VocabularyRepository`), domain models (`Vocabulary`, `Article`, `GrammarBreakdown`), Kotlin Multiplatform module boundaries, and custom JSON schemas (`WordDto`).
-- **Prompt Engineering & Context Optimization:** Prompts were structured with explicit qualitative constraints, JSON schema guarantees, and structural bounds. When token limits or API rate constraints occurred, the architect strategically chunked dataset generation and engineered automated batch recovery tools.
-- **Continuous Quality Audit & Technical Oversight:** Every AI-generated output (from Gradle build scripts to Firestore Admin JSON importers) was rigorously audited. Illogical code branches, redundant SDK dependencies, and syntax anomalies were challenged and corrected immediately.
-
-### Technical Efficiency & Impact
-- **540+ Core B1 Nouns Dataset Scaffolding:** Synthesized, validated, and normalized over 540 detailed German-Turkish B1 vocabulary records with article rules, plural forms, and example sentences.
-- **Resilient Cloud Importer Pipeline:** Designed a fallback-safe REST and Admin SDK ingestion pipeline (`WordsImporter.kt`) capable of parsing, sanitizing, and writing batch documents to Cloud Firestore with zero data loss.
-- **Zero Technical Debt Delivery:** Kept codebase strictly aligned with Kotlin Multiplatform standards, unidirectional data flow, and modern Compose guidelines across Android, Desktop, and Web.
+### Fullstack Engineering Accomplishments
+- **Decoupled Gateway Layer:** Isolated client applications from direct database credentials. The Ktor Netty backend serves as the single source of truth for Cloud Firestore access, enforcing API contract encapsulation through `ApiResponse<T>` wrappers.
+- **Resilient Multi-Target Client Networking:** Engineered `RemindApiClient` in `:shared` with automated candidate IP failover (`getBaseUrl()`, `127.0.0.1:8080`, `10.0.2.2:8080`, `localhost:8080`) and connection timeouts, enabling instant connectivity across Android Emulators, physical USB/Wi-Fi devices via `adb reverse`, JVM Desktop, and Web/JS browsers.
+- **Industrial Error & Concurrency Protection:** Implemented Ktor `StatusPages` for global exception safety, Touchlab Kermit for multiplatform client logging, `ApiFuture.await()` coroutine cancellation, and dynamic `/health` telemetry monitoring.
+- **Security-First Environment Scoping:** Eliminated hardcoded secret paths in favor of `BackendConfig.kt`, dynamic `user.home` key resolution, and hardened `.gitignore` rules.
 
 ---
 
-## Tech Stack & Tools
+## 📂 Backend Project Structure
 
-- **Language:** Kotlin 2.4+ (Kotlin Multiplatform)
-- **Platforms:** Android, JVM Desktop, Web (JS/Browser)
-- **UI Framework:** Compose Multiplatform
-- **Database / Cloud:** Google Cloud Firestore & Firebase REST API
-- **Remote Config:** Firebase Remote Config (`project_id`, `firebase_url`, `word_file_location`)
-- **Serialization:** Kotlinx Serialization
-- **Asynchronous Execution:** Kotlin Coroutines, Channels & StateFlow
+```text
+backend/
+├── src/main/kotlin/com/ozlembasabakar/remind/backend/
+│   ├── Application.kt                # Ktor entrypoint, CORS, StatusPages & routes
+│   ├── config/
+│   │   └── BackendConfig.kt          # Environment configuration loader
+│   ├── firebase/
+│   │   └── FirebaseAdmin.kt          # Firebase Admin SDK initializer
+│   ├── routes/
+│   │   └── WordRoutes.kt             # REST endpoints (/words, /health)
+│   ├── service/
+│   │   └── FirestoreService.kt       # Firestore CRUD logic
+│   └── util/
+│       └── ApiFutureUtils.kt         # ApiFuture.await() coroutine extension
+└── src/main/resources/
+    └── logback.xml                   # Console logger configuration
+```
