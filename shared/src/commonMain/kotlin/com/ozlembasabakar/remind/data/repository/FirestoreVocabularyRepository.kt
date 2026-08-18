@@ -2,7 +2,6 @@ package com.ozlembasabakar.remind.data.repository
 
 import com.ozlembasabakar.remind.dto.WordDto
 import com.ozlembasabakar.remind.dto.toDomain
-import com.ozlembasabakar.remind.data.firebase.fetchFirestoreRestWords
 import com.ozlembasabakar.remind.data.firebase.initializeFirebase
 import com.ozlembasabakar.remind.domain.model.Article
 import com.ozlembasabakar.remind.domain.model.GrammarBreakdown
@@ -113,13 +112,6 @@ class FirestoreVocabularyRepository(
             }
         } catch (e: Exception) {
             println("Firestore collection fetch EXCEPTION: ${e::class.simpleName} - ${e.message}")
-        }
-
-        val restCards = fetchFirestoreRestWords()
-        if (!restCards.isNullOrEmpty()) {
-            println("Successfully loaded ${restCards.size} cards via Firestore REST API!")
-            cachedCards = restCards.shuffled()
-            return@withLock cachedCards
         }
 
         println("Firestore returned no cards or threw an exception. Falling back to local memory.")

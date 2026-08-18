@@ -22,7 +22,10 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":shared"))
+    implementation(project(":shared")) {
+        exclude(group = "com.google.firebase")
+        exclude(group = "dev.gitlive")
+    }
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.content.negotiation)
