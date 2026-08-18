@@ -19,4 +19,8 @@ suspend fun <T> ApiFuture<T>.await(): T = suspendCancellableCoroutine { continua
             continuation.resumeWithException(t)
         }
     }, MoreExecutors.directExecutor())
+
+    continuation.invokeOnCancellation {
+        this.cancel(true)
+    }
 }
