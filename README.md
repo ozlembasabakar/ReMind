@@ -10,24 +10,24 @@ The backend acts as an asynchronous, non-blocking gateway between cross-platform
 
 ```mermaid
 graph TD
-    subgraph Clients (Compose Multiplatform)
-        android[Android Target]
-        desktop[Desktop JVM Target]
-        web[Web JS Target]
+    subgraph Clients["Clients (Compose Multiplatform)"]
+        android["Android Target"]
+        desktop["Desktop JVM Target"]
+        web["Web JS Target"]
     end
 
-    subgraph Ktor Backend Service (:backend)
-        netty[Netty Engine :8080]
-        config[BackendConfig Environment]
-        statusPages[StatusPages Centralized Error Handler]
-        callLogging[SLF4J / Logback Logging]
-        wordRoutes[WordRoutes /api/v1/]
-        firestoreService[FirestoreService]
-        futureUtils[ApiFuture.await Coroutines]
+    subgraph Backend["Ktor Backend Service (:backend)"]
+        netty["Netty Engine :8080"]
+        config["BackendConfig Environment"]
+        statusPages["StatusPages Centralized Error Handler"]
+        callLogging["SLF4J / Logback Logging"]
+        wordRoutes["WordRoutes /api/v1/"]
+        firestoreService["FirestoreService"]
+        futureUtils["ApiFuture.await Coroutines"]
     end
 
-    subgraph Database Layer
-        firestore[Google Cloud Firestore]
+    subgraph Database["Database Layer"]
+        firestore["Google Cloud Firestore"]
     end
 
     android -->|HTTP / REST JSON| netty
