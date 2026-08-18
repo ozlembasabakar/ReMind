@@ -131,11 +131,11 @@ class FirestoreService(private val db: Firestore) {
         val srsMap = map["srsStatus"] as? Map<String, Any?>
         val srsStatus = srsMap?.let { s ->
             SrsStatusDto(
-                repetitions = (s["repetitions"] as? Long)?.toInt() ?: 0,
-                intervalDays = (s["intervalDays"] as? Double) ?: 1.0,
-                easeFactor = (s["easeFactor"] as? Double) ?: 2.5,
-                lastReviewedAtEpochMs = (s["lastReviewedAtEpochMs"] as? Long) ?: 0L,
-                nextReviewAtEpochMs = (s["nextReviewAtEpochMs"] as? Long) ?: 0L
+                repetitions = (s["repetitions"] as? Number)?.toInt() ?: 0,
+                intervalDays = (s["intervalDays"] as? Number)?.toDouble() ?: 1.0,
+                easeFactor = (s["easeFactor"] as? Number)?.toDouble() ?: 2.5,
+                lastReviewedAtEpochMs = (s["lastReviewedAtEpochMs"] as? Number)?.toLong() ?: 0L,
+                nextReviewAtEpochMs = (s["nextReviewAtEpochMs"] as? Number)?.toLong() ?: 0L
             )
         }
 

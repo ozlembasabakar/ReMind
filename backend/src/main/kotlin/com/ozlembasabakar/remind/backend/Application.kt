@@ -1,5 +1,6 @@
 package com.ozlembasabakar.remind.backend
 
+import com.ozlembasabakar.remind.backend.config.BackendConfig
 import com.ozlembasabakar.remind.backend.firebase.FirebaseAdmin
 import com.ozlembasabakar.remind.backend.routes.configureWordRoutes
 import com.ozlembasabakar.remind.backend.service.FirestoreService
@@ -24,8 +25,8 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger("ApplicationExceptionHandler")
 
 fun main() {
-    val port = System.getenv("PORT")?.toIntOrNull() ?: 8080
-    embeddedServer(Netty, port = port, host = "0.0.0.0", module = Application::module)
+    BackendConfig.logConfig()
+    embeddedServer(Netty, port = BackendConfig.port, host = BackendConfig.host, module = Application::module)
         .start(wait = true)
 }
 
@@ -39,7 +40,14 @@ fun Application.module() {
     }
 
     install(CORS) {
-        anyHost()
+        if (BackendConfig.environment == "production") {
+            // Restrict origins in production
+            allowHost("remind.app", schemes = listOf("https"))
+            allowHost("127.0.0.1:8080")
+            allowHost("localhost:8080")
+        } else {
+            anyHost()
+        }
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
         allowMethod(HttpMethod.Options)

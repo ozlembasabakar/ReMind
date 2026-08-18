@@ -20,12 +20,18 @@ const val FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/$PROJECT
 private val logger = LoggerFactory.getLogger("WordsImporter")
 
 @OptIn(ExperimentalSerializationApi::class)
-fun main() {
-    val wordsFile = File("D:\\Downloads\\words.json")
-    val candidateKeys = listOf(
+fun main(args: Array<String>) {
+    val inputPath = args.firstOrNull()
+        ?: System.getenv("WORDS_FILE_PATH")
+    val wordsFile = File(inputPath)
+
+    val userHomeCredentials = File(System.getProperty("user.home"), ".credentials/remind-service-account-key.json")
+    val customKeyPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    val candidateKeys = listOfNotNull(
+        customKeyPath?.let { File(it) },
         File("serviceAccountKey.json"),
         File("service-account-key.json"),
-        File("C:\\Users\\ozlem\\.credentials\\remind-service-account-key.json")
+        if (userHomeCredentials.exists()) userHomeCredentials else null
     )
     val serviceAccountFile = candidateKeys.firstOrNull { it.exists() }
 

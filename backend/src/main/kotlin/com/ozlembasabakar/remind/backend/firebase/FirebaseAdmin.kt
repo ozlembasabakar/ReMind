@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.cloud.firestore.Firestore
 import com.google.firebase.cloud.FirestoreClient
+import com.ozlembasabakar.remind.backend.config.BackendConfig
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
@@ -14,11 +15,12 @@ object FirebaseAdmin {
 
     fun initialize(): Firestore {
         if (FirebaseApp.getApps().isEmpty()) {
+            val userHomeCredentials = File(System.getProperty("user.home"), ".credentials/remind-service-account-key.json")
             val candidateKeys = listOfNotNull(
-                System.getenv("GOOGLE_APPLICATION_CREDENTIALS")?.let { File(it) },
+                BackendConfig.serviceAccountKeyPath?.let { File(it) },
                 File("service-account-key.json"),
                 File("serviceAccountKey.json"),
-                File("C:\\Users\\ozlem\\.credentials\\remind-service-account-key.json")
+                if (userHomeCredentials.exists()) userHomeCredentials else null
             )
             val keyFile = candidateKeys.firstOrNull { it.exists() }
 
