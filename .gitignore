@@ -18,10 +18,22 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 
-# Security & Secrets
+# Environment & Secret Files
+.env
+.env.local
+.env.*.local
+.credentials/
+
+# Firebase & Service Account Keys
 serviceAccountKey.json
 serviceAccountKey*.json
+service-account-key.json
+service-account-key*.json
 *.json
 !androidApp/google-services.json
 !package*.json
+!package-lock.json
 
+# Log & Temporary Files
+*.log
+scratch/
