@@ -11,10 +11,18 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class HealthStatusDto(
+    val status: String = "ok",
+    val service: String = "ReMind Backend"
+)
+
 fun Route.configureWordRoutes(firestoreService: FirestoreService) {
     route("/health") {
         get {
-            call.respond(ApiResponse.success(mapOf("status" to "ok", "service" to "ReMind Backend")))
+            call.respond<ApiResponse<HealthStatusDto>>(ApiResponse.success(HealthStatusDto()))
         }
     }
 
@@ -22,18 +30,18 @@ fun Route.configureWordRoutes(firestoreService: FirestoreService) {
         get("/words") {
             try {
                 val words = firestoreService.getAllWords()
-                call.respond(ApiResponse.success(words))
+                call.respond<ApiResponse<List<com.ozlembasabakar.remind.dto.WordDto>>>(ApiResponse.success(words))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, ApiResponse.error<Nothing>("FIRESTORE_ERROR", e.message ?: "Unknown error"))
+                call.respond<ApiResponse<String>>(HttpStatusCode.InternalServerError, ApiResponse.error("FIRESTORE_ERROR", e.message ?: "Unknown error"))
             }
         }
 
         get("/words/due") {
             try {
                 val words = firestoreService.getDueWords()
-                call.respond(ApiResponse.success(words))
+                call.respond<ApiResponse<List<com.ozlembasabakar.remind.dto.WordDto>>>(ApiResponse.success(words))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, ApiResponse.error<Nothing>("FIRESTORE_ERROR", e.message ?: "Unknown error"))
+                call.respond<ApiResponse<String>>(HttpStatusCode.InternalServerError, ApiResponse.error("FIRESTORE_ERROR", e.message ?: "Unknown error"))
             }
         }
 
@@ -42,12 +50,12 @@ fun Route.configureWordRoutes(firestoreService: FirestoreService) {
                 val request = call.receive<SrsReviewRequestDto>()
                 val updated = firestoreService.updateSrsStatus(request.wordId, request.rating)
                 if (updated != null) {
-                    call.respond(ApiResponse.success(updated))
+                    call.respond<ApiResponse<com.ozlembasabakar.remind.dto.WordDto>>(ApiResponse.success(updated))
                 } else {
-                    call.respond(HttpStatusCode.NotFound, ApiResponse.error<Nothing>("NOT_FOUND", "Word with ID ${request.wordId} not found."))
+                    call.respond<ApiResponse<String>>(HttpStatusCode.NotFound, ApiResponse.error("NOT_FOUND", "Word with ID ${request.wordId} not found."))
                 }
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, ApiResponse.error<Nothing>("INVALID_REQUEST", e.message ?: "Invalid request body"))
+                call.respond<ApiResponse<String>>(HttpStatusCode.BadRequest, ApiResponse.error("INVALID_REQUEST", e.message ?: "Invalid request body"))
             }
         }
     }

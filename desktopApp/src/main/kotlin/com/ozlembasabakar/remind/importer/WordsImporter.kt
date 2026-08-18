@@ -15,14 +15,19 @@ const val FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/$PROJECT
 @OptIn(ExperimentalSerializationApi::class)
 fun main() {
     val wordsFile = File("D:\\Downloads\\words.json")
-    val serviceAccountFile = File("serviceAccountKey.json")
+    val candidateKeys = listOf(
+        File("serviceAccountKey.json"),
+        File("service-account-key.json"),
+        File("C:\\Users\\ozlem\\.credentials\\remind-service-account-key.json")
+    )
+    val serviceAccountFile = candidateKeys.firstOrNull { it.exists() }
 
     if (!wordsFile.exists()) {
         println("ERROR: words.json not found at ${wordsFile.absolutePath}")
         return
     }
-    if (!serviceAccountFile.exists()) {
-        println("ERROR: serviceAccountKey.json not found at ${serviceAccountFile.absolutePath}")
+    if (serviceAccountFile == null || !serviceAccountFile.exists()) {
+        println("ERROR: Service account key not found. Tried paths: ${candidateKeys.map { it.absolutePath }}")
         return
     }
 
